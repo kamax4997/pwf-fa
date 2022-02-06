@@ -1,6 +1,5 @@
 export { default as Header } from './Header'
 export { default as Loading } from './Loading'
-export { default as PWFButton } from './PWFButton'
 export { default as TaskSelect } from './TaskSelect'
 export { default as TimeEntries } from './TimeEntries'
 export { default as TimeEntryRow } from './TimeEntryRow'

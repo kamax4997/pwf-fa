@@ -1,6 +1,6 @@
 import React from 'react'
-import { withStyles, Theme, createStyles, makeStyles } from '@material-ui/core/styles'
-import { TextField, Typography, TableCell } from '@material-ui/core'
+import { withStyles, Theme, createStyles } from '@material-ui/core/styles'
+import { Typography, TableCell } from '@material-ui/core'
 import { ITimeRecord } from 'utils/types'
 import { formatDate, convertTimeSpent } from 'utils/helpers'
 
@@ -20,7 +20,7 @@ const StyledTableCell = withStyles((theme: Theme) =>
   }),
 )(TableCell)
 
-const TimeEntryRow = (props: ITimeEntryRowProps) => {
+const TimeEntryRow: React.FC<ITimeEntryRowProps> = (props: ITimeEntryRowProps) => {
   const { data } = props
 
   return (

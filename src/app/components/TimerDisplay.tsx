@@ -1,6 +1,5 @@
 import React from 'react'
-import { 
-  withStyles, 
+import {
   Theme, 
   createStyles, 
   makeStyles
@@ -67,14 +66,14 @@ const TimerDisplay: React.FC<ITimerDisplayProps> = (props: ITimerDisplayProps) =
         </CardContent>
         <div className={classes.controls}>
           <IconButton 
-            aria-label="play/pause" 
+            aria-label="start" 
             disabled={isTimerOn} 
             onClick={onTimerOn}
           >
             <PlayArrowIcon className={classes.controlButton} />
           </IconButton>
           <IconButton 
-            aria-label="next" 
+            aria-label="stop" 
             disabled={!isTimerOn} 
             onClick={onTimerOff}
           >
@@ -85,7 +84,7 @@ const TimerDisplay: React.FC<ITimerDisplayProps> = (props: ITimerDisplayProps) =
       <CardMedia
         className={classes.cover}
         image={PWFCogsIntegration}
-        title="Live from space album cover"
+        title="PWFCogsIntegration"
       />
     </Card>
   )

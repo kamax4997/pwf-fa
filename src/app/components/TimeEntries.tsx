@@ -49,7 +49,7 @@ const useStyles = makeStyles({
   },
 })
 
-const TimeEntries = (props: ITimeEntriesProps) => {
+const TimeEntries: React.FC<ITimeEntriesProps> = (props: ITimeEntriesProps) => {
   const classes = useStyles()
   const { task } = props
 
@@ -66,17 +66,6 @@ const TimeEntries = (props: ITimeEntriesProps) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {/* {rows.map((row) => (
-            <StyledTableRow key={row.name}>
-              <StyledTableCell component="th" scope="row">
-                {row.name}
-              </StyledTableCell>
-              <StyledTableCell align="right">{row.calories}</StyledTableCell>
-              <StyledTableCell align="right">{row.fat}</StyledTableCell>
-              <StyledTableCell align="right">{row.carbs}</StyledTableCell>
-              <StyledTableCell align="right">{row.protein}</StyledTableCell>
-            </StyledTableRow>
-          ))} */}
           {
             task?.timerecords?.map((record: ITimeRecord) => {
               return record && (
