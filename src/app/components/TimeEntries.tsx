@@ -53,47 +53,16 @@ const TimeEntries = (props: ITimeEntriesProps) => {
   const classes = useStyles()
   const { task } = props
 
-  // return (
-  //   <table className="time-entries">
-  //     <thead>
-  //       <tr>
-  //         <th className="p-1">
-  //           Notes
-  //         </th>
-  //         <th className="p-1">
-  //           Start Date
-  //         </th>
-  //         <th className="p-1">
-  //           End Date
-  //         </th>
-  //         <th className="p-1">
-  //           Time Tracked
-  //         </th>
-  //         <th className="p-1">
-  //           Tracked By
-  //         </th>
-  //       </tr>
-  //     </thead>
-  //     <tbody>
-  //       {
-  //         task?.timerecords?.map((record: ITimeRecord) => {
-  //           return record && <TimeEntryRow key={record.id} data={record} />
-  //         })
-  //       }
-  //     </tbody>
-  //   </table>
-  // )
-
   return (
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="customized table">
         <TableHead>
           <TableRow>
-            <StyledTableCell>Notes</StyledTableCell>
+            <StyledTableCell align="center">Notes</StyledTableCell>
             <StyledTableCell align="center">Start Date</StyledTableCell>
             <StyledTableCell align="center">End Date</StyledTableCell>
-            <StyledTableCell align="right">Time Tracked</StyledTableCell>
-            <StyledTableCell align="right">Tracked By</StyledTableCell>
+            <StyledTableCell align="center">Time Tracked</StyledTableCell>
+            <StyledTableCell align="center">Tracked By</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
