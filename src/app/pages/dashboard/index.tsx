@@ -15,7 +15,8 @@ import useGraphql from 'app/hooks/useGraphql'
 import { ITask } from 'utils/types'
 import { toast } from 'react-toastify'
 import { TaskSelect, TimeEntries, TimerDisplay } from 'app/components'
-import { startTimerMutation } from 'app/graphql/mutations'
+import { startTimerMutation, stopTimerMutation } from 'app/graphql/mutations'
+import { convertRecordedTime } from 'utils/helpers'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -39,10 +40,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Dashboard: React.FC = () => {
   const classes = useStyles()
-  const { 
-    isLoading, 
-    isTimerOn, 
-    tasks, 
+  const {
+    isTimerOn,
     setTasks, 
     startTimer, 
     stopTimer 
@@ -50,6 +49,7 @@ const Dashboard: React.FC = () => {
 
   const [currentTask, setCurrentTask] = React.useState<ITask>()
   const [recordedTime, setRecordedTime] = React.useState(0)
+  const [isModalOpen, setIsModalOpen] = React.useState(false)
 
   const dashboardData = useLazyLoadQuery<any>(
     graphql`
@@ -93,11 +93,10 @@ const Dashboard: React.FC = () => {
     }
   }, [currentTask, dashboardData])
 
-
   const onTimerOff = React.useCallback(() => {
     if (currentTask) {
       setRecordedTime(0)
-      stopTimer()
+      stopTimerMutation(currentTask.id, '', stopTimer)
       toast.success('Timer Off!')
     } else {
       toast.error('Please select the task!')
@@ -109,15 +108,7 @@ const Dashboard: React.FC = () => {
     if (isTimerOn && currentTask) {
       onTimerOff()
     }
-  }, [currentTask, setCurrentTask, isTimerOn])
-
-  const convertTimeSpent = (time: string): string => {
-    const min = Math.floor(+time / 60)
-    const sec = +time - min * 60
-    const minValue = min < 10 ? `0${min}` : min
-    const secValue = sec < 10 ? `0${sec}` : sec
-    return `${minValue} : ${secValue}`
-  }
+  }, [setCurrentTask, isTimerOn])
 
   React.useEffect(() => {
     setTasks(dashboardData.tasks)
@@ -134,7 +125,7 @@ const Dashboard: React.FC = () => {
     }
   }, [isTimerOn, recordedTime, setRecordedTime])
 
-  console.log(recordedTime, dashboardData)
+  console.log(dashboardData)
 
   return (
     <div className={classes.root}>
@@ -152,7 +143,7 @@ const Dashboard: React.FC = () => {
           </Grid>
           <Grid item lg={3} md={4} xs={12}>
             <TimerDisplay
-              timeSpent={convertTimeSpent('')}
+              timeSpent={convertRecordedTime(recordedTime.toString())}
               onTimerOn={onTimerOn}
               onTimerOff={onTimerOff} />
           </Grid>

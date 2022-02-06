@@ -2,7 +2,7 @@ import React from 'react'
 import { withStyles, Theme, createStyles } from '@material-ui/core/styles'
 import { Typography, TableCell } from '@material-ui/core'
 import { ITimeRecord } from 'utils/types'
-import { formatDate, convertTimeSpent } from 'utils/helpers'
+import { formatDate, convertRecordedTime } from 'utils/helpers'
 
 interface ITimeEntryRowProps {
   data: ITimeRecord
@@ -35,7 +35,7 @@ const TimeEntryRow: React.FC<ITimeEntryRowProps> = (props: ITimeEntryRowProps) =
         {formatDate(new Date(data?.enddate)) || "-"}
       </StyledTableCell>
       <StyledTableCell align="right">
-        {convertTimeSpent(data?.timespent)}
+        {convertRecordedTime(data?.timespent)}
       </StyledTableCell>
       <StyledTableCell align="right">
         {data?.contact.fullname}

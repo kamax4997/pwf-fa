@@ -1,4 +1,4 @@
-export const convertTimeSpent = (time: string): string => {
+export const convertRecordedTime = (time: string): string => {
   const min = Math.floor(+time / 60)
   const sec = +time - min * 60
   const minValue = min < 10 ? `0${min}` : min
@@ -7,11 +7,11 @@ export const convertTimeSpent = (time: string): string => {
   return `${minValue} : ${secValue}`
 }
 
-export function padTo2Digits(num: number) {
+export const padTo2Digits = (num: number) => {
   return num.toString().padStart(2, '0')
 }
   
-export function formatDate(date: Date) {
+export const formatDate = (date: Date) => {
   return (
     [
       date.getFullYear(),
