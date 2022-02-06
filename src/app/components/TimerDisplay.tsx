@@ -44,8 +44,6 @@ const useStyles = makeStyles((theme: Theme) =>
     controls: {
       display: 'flex',
       alignItems: 'center',
-      paddingLeft: theme.spacing(1),
-      paddingBottom: theme.spacing(1),
     },
     controlButton: {
       height: 25,

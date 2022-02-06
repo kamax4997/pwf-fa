@@ -1,39 +1,54 @@
 import React from 'react'
-import { withStyles, Theme, createStyles, makeStyles } from '@material-ui/core/styles'
-import Autocomplete from '@material-ui/lab/Autocomplete'
-import { TextField } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
 import useGraphql from 'app/hooks/useGraphql'
 import { ITask } from 'utils/types'
+import InputLabel from '@material-ui/core/InputLabel'
+import MenuItem from '@material-ui/core/MenuItem'
+import FormControl from '@material-ui/core/FormControl'
+import Select from '@material-ui/core/Select'
 
 interface ITaskSelectProps {
-  setOption: any
+  setOption: (newTask: ITask | undefined) => void
+  currentTask: ITask | undefined
 }
 
 const useStyles = makeStyles({
   taskSelect: {
     width: '100%',
   },
+  formControl: {
+    margin: 4,
+    minWidth: 196,
+  },
 })
 
 const TaskSelect: React.FC<ITaskSelectProps> = (props: ITaskSelectProps) => {
   const classes = useStyles()
-  const { setOption } = props
+  const { currentTask, setOption } = props
   const { tasks } = useGraphql()
 
+  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const newTask = tasks.find((t: ITask) => t.id === event.target.value)
+    setOption(newTask)
+  }
+
   return (
-    <Autocomplete
-      {...{
-        options: tasks,
-          getOptionLabel: (option: ITask) => option.name
-      }}
-      selectOnFocus
-      id="combo-box-demo"
-      className={classes.taskSelect}
-      onChange={(event: any, newValue: any | null) => {
-        setOption(newValue)
-      }}
-      renderInput={(params) => <TextField {...params} label="Task" />}
-    />
+    <FormControl variant="outlined" className={classes.formControl}>
+      <InputLabel id="task-select-label">Task</InputLabel>
+      <Select
+        labelId="task-select-label"
+        id="task-select"
+        value={currentTask?.id || ''}
+        onChange={handleChange}
+        label="Task"
+        className={classes.taskSelect}
+      >
+        <MenuItem value=''>
+          <em>None</em>
+        </MenuItem>
+        {tasks.map((task: ITask) => <MenuItem key={task.id} value={task.id}>{task.name}</MenuItem>)}
+      </Select>
+    </FormControl>
   )
 }
 

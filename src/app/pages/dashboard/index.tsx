@@ -1,11 +1,14 @@
 import React from 'react'
 import {
-  Grid,Paper
+  Grid, 
+  Paper, 
+  Typography
 } from '@material-ui/core'
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import {
-  VerifiedUser, AssignmentTurnedIn,
-} from '@material-ui/icons'
+import { 
+  makeStyles, 
+  createStyles, 
+  Theme 
+} from '@material-ui/core/styles'
 
 import { useLazyLoadQuery, commitMutation } from 'react-relay'
 import { graphql } from 'babel-plugin-relay/macro'
@@ -28,6 +31,11 @@ const useStyles = makeStyles((theme: Theme) =>
     timeEntries: {
       paddingTop: '0px !important'
     },
+    description: {
+      marginBottom: 8,
+      marginLeft: 8,
+      fontSize: 16
+    }
   }),
 )
 
@@ -98,18 +106,12 @@ const Dashboard: React.FC = () => {
     }
   }, [currentTask, setRecordedTime])
 
-  const setTaskOption = React.useCallback((t: ITask) => {
+  const onSelect = React.useCallback((t: ITask | undefined) => {
     setCurrentTask(t)
-    const index = t?.timerecords?.findIndex((timeRecord: ITimeRecord) => timeRecord?.running)
-    if (index && index > -1) {
-      // setRecordedTime(t?.timerecords[0]?.timespent);
-    } else {
-      setRecordedTime(0)
-    }
     if (isTimerOn && currentTask) {
-      stopTimer()
+      onTimerOff()
     }
-  }, [currentTask, setCurrentTask, setRecordedTime, isTimerOn])
+  }, [currentTask, setCurrentTask, isTimerOn])
 
   const convertTimeSpent = (time: string): string => {
     const min = Math.floor(+time / 60)
@@ -121,7 +123,6 @@ const Dashboard: React.FC = () => {
 
   React.useEffect(() => {
     setTasks(dashboardData.tasks)
-
   }, [dashboardData])
 
   React.useEffect(() => {
@@ -135,14 +136,21 @@ const Dashboard: React.FC = () => {
     }
   }, [isTimerOn, recordedTime, setRecordedTime])
 
-  console.log(recordedTime)
+  console.log(recordedTime, dashboardData)
 
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
         <Grid container spacing={6} justifyContent="space-between">
           <Grid item lg={3} md={4} xs={12}>
-            <TaskSelect setOption={setTaskOption} />
+            <Typography 
+              component="h6" 
+              variant="h6" 
+              className={classes.description}
+            >
+              Please select a task.
+            </Typography>
+            <TaskSelect setOption={onSelect} currentTask={currentTask} />
           </Grid>
           <Grid item lg={3} md={4} xs={12}>
             <TimerDisplay
