@@ -1,0 +1,86 @@
+{
+  "name": "pwf-code-test",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "^16.13.0"
+  },
+  "author": {
+    "name": "Andrei Strukau",
+    "email": "karlikboroda@gmail.com"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.12.3",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.60",
+    "@reduxjs/toolkit": "^1.6.2",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^12.0.0",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "babel-plugin-relay": "^12.0.0",
+    "history": "^5.0.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-helmet": "^6.1.0",
+    "react-redux": "^7.2.6",
+    "react-relay": "^12.0.0",
+    "react-router-dom": "^5.3.0",
+    "react-scripts": "4.0.3",
+    "react-toastify": "^8.0.3",
+    "redux": "^4.1.1",
+    "redux-persist": "^6.0.0",
+    "redux-thunk": "^2.4.0",
+    "relay-runtime": "^12.0.0",
+    "sass": "1.39.2",
+    "typescript": "^4.1.2",
+    "web-vitals": "^1.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx ./",
+    "fix": "eslint --ext .js,.jsx,.ts,.tsx  --fix ./",
+    "relay": "relay-compiler --schema schema.graphql --src src --language typescript",
+    "cypress:open": "cypress open"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@types/material-ui": "^0.21.12",
+    "@types/react-helmet": "^6.1.4",
+    "@types/react-redux": "^7.1.20",
+    "@types/react-relay": "^11.0.2",
+    "@types/react-router-dom": "^5.3.2",
+    "@typescript-eslint/eslint-plugin": "^5.2.0",
+    "@typescript-eslint/parser": "^5.2.0",
+    "cypress": "^8.7.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.26.1",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "graphql": "^15.7.1",
+    "graphql-cli": "4.1.0",
+    "prettier": "^2.5.1",
+    "relay-compiler": "^12.0.0",
+    "relay-compiler-language-typescript": "^14.2.1"
+  },
+  "proxy": "https://api.pwf.com/api/v2"
+}

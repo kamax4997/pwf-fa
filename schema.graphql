@@ -1,0 +1,5214 @@
+schema {
+  query: Query
+  mutation: RootMutation
+}
+
+directive @auth(type: String!, permission: Int!) on FIELD_DEFINITION
+
+directive @accountPlan(id: Int!) on FIELD_DEFINITION
+
+directive @environment(type: ENVIRONMENT!) on FIELD_DEFINITION
+
+directive @contactType(
+  staff: Boolean!
+  contractor: Boolean!
+  client: Boolean!
+) on FIELD_DEFINITION
+
+enum APIFIELDTYPE {
+  contact
+  company
+  invoice
+  project
+  quote
+  task
+  time
+}
+
+input APIFIELDTYPE_comparison_exp {
+  EQ: APIFIELDTYPE
+  IN: [APIFIELDTYPE]
+  NEQ: APIFIELDTYPE
+  NIN: [APIFIELDTYPE!]
+}
+
+enum AUDITEVENTACTION {
+  add
+  edit
+  delete
+  complete
+  login
+  logout
+}
+
+input AUDITEVENTACTION_comparison_exp {
+  EQ: AUDITEVENTACTION
+  NEQ: AUDITEVENTACTION
+  IN: [AUDITEVENTACTION!]
+  NIN: [AUDITEVENTACTION!]
+}
+
+enum AUDITEVENTTYPE {
+  alert
+  company
+  category
+  contact
+  customfield
+  division
+  file
+  group
+  invoice
+  message
+  customstatus
+  projectrequest
+  project
+  profile
+  settings
+  template
+  quote
+  projectnote
+  task
+  time
+  login
+  team
+  note
+  userpermission
+  blank
+}
+
+input AUDITEVENTTYPE_comparison_exp {
+  EQ: AUDITEVENTTYPE
+  NEQ: AUDITEVENTTYPE
+  IN: [AUDITEVENTTYPE!]
+  NIN: [AUDITEVENTTYPE!]
+}
+
+type Account {
+  id: ID!
+  accounturl: String
+  companyname: String
+  quotes: Boolean
+  invoices: Boolean
+  accountplan: Int
+  instanceurl: String
+  instance: INSTANCEENUM
+}
+
+input AccountCreateLoginInput {
+  url: String!
+  hash: String
+}
+
+type AccountUser {
+  id: Int
+  divisionid: Int
+  companyid: Int
+  fullname: String
+  email: EmailAddress
+  type: CONTACTTYPE
+  viewallcompanyprojects: Boolean
+  superuser: Boolean
+}
+
+type Aggregate {
+  value: DECIMAL
+}
+
+type Apifield {
+  id: ID!
+  datestamp: Float
+  deleted: Boolean
+  staffonly: Boolean
+  name: String
+  type: APIFIELDTYPE
+  values: [ApifieldValue]
+}
+
+input ApifieldFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [Apifield_orderby!]
+
+  #  filter the rows returned
+  where: Apifield_bool_exp
+}
+
+type ApifieldValue {
+  id: ID!
+  apifieldid: Int
+  datestamp: Float
+  deleted: Boolean
+  staffonly: Boolean
+  name: String
+  type: APIFIELDTYPE
+  value: String
+}
+
+input ApifieldValueFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [ApifieldValue_orderby!]
+
+  #  filter the rows returned
+  where: ApifieldValue_bool_exp
+}
+
+input ApifieldValue_bool_exp {
+  AND: [ApifieldValue_bool_exp]
+
+  #  NOT: ApifieldValue_bool_exp
+  OR: [ApifieldValue_bool_exp]
+  id: Int_comparison_exp
+  deleted: Boolean_comparison_exp = { EQ: false }
+  staffonly: Boolean_comparison_exp
+  type: APIFIELDTYPE_comparison_exp
+}
+
+#  ordering options when selecting data
+input ApifieldValue_orderby {
+  id: orderby
+}
+
+input Apifield_bool_exp {
+  AND: [Apifield_bool_exp]
+
+  #  NOT: Apifield_bool_exp
+  OR: [Apifield_bool_exp]
+  id: Int_comparison_exp
+  deleted: Boolean_comparison_exp = { EQ: false }
+  staffonly: Boolean_comparison_exp
+  type: APIFIELDTYPE_comparison_exp
+}
+
+#  ordering options when selecting data
+input Apifield_orderby {
+  id: orderby
+}
+
+# JSON Array of integers
+scalar ArrayOfIntegers
+
+# JSON Array of strings
+scalar ArrayOfStrings
+
+type AuditLog {
+  id: ID!
+  datestamp: Float
+  eventtype: String
+  eventaction: String
+  action: String
+  details: String
+  eventdate: DATETIMEFORMAT
+  userdate: DATETIMEFORMAT
+  contact: Contact
+  division: Division
+  project: Project
+  task: Task
+}
+
+input AuditLogFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [AuditLog_orderby!]
+
+  #  filter the rows returned
+  where: AuditLog_bool_exp
+}
+
+input AuditLog_bool_exp {
+  AND: [AuditLog_bool_exp]
+
+  #  NOT: AuditLog_bool_exp
+  OR: [AuditLog_bool_exp]
+  id: Int_comparison_exp
+  contactid: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  projectid: Int_comparison_exp
+  taskid: Int_comparison_exp
+  eventdate: Date_comparison_exp
+  userdate: Date_comparison_exp
+  eventtype: AUDITEVENTTYPE_comparison_exp
+  eventaction: AUDITEVENTACTION_comparison_exp
+  action: String_comparison_exp
+}
+
+#  ordering options when selecting data
+input AuditLog_orderby {
+  id: orderby
+}
+
+type AuthPayload {
+  token: String
+
+  #  JSON Web Token
+  data: User
+}
+
+# A field that represents a special Boolean type
+scalar BOOLEANACTIVEINACTIVE
+
+input BOOLEANACTIVEINACTIVE_comparison_exp {
+  EQ: BOOLEANACTIVEINACTIVE
+  IN: [BOOLEANACTIVEINACTIVE!]
+  NEQ: BOOLEANACTIVEINACTIVE
+  NIN: [BOOLEANACTIVEINACTIVE!]
+}
+
+# A field that represents a special Boolean type
+scalar BOOLEANYN
+
+# java.math.BigInteger
+scalar BigInteger
+
+input BigInteger_comparison_exp {
+  EQ: Int
+  GT: Int
+  GTE: Int
+  IN: [Int!]
+  IS_NULL: Boolean
+  LT: Int
+  LTE: Int
+  NEQ: Int
+  NIN: [Int!]
+}
+
+type BoardColumn {
+  id: ID!
+  projectid: Int
+  name: String
+  order: Int
+  color: Color
+  datestamp: Float
+  deleted: Boolean
+  division: Division
+  project: Project
+  tasks(input: Task_bool_exp = { deleted: { EQ: false } }): [Task]
+}
+
+input BoardColumnFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [BoardColumn_orderby!]
+
+  #  filter the rows returned
+  where: BoardColumn_bool_exp
+}
+
+input BoardColumn_bool_exp {
+  AND: [BoardColumn_bool_exp]
+
+  #  NOT: BoardColumn_bool_exp
+  OR: [BoardColumn_bool_exp]
+  id: Int_comparison_exp
+  projectid: Int_comparison_exp
+  taskid: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  deleted: Boolean_comparison_exp = { EQ: false }
+  Project: Project_bool_exp
+  Task: Task_bool_exp
+}
+
+#  ordering options when selecting data
+input BoardColumn_orderby {
+  id: orderby
+  order: orderby
+  name: orderby
+}
+
+type Bookmark {
+  id: ID!
+  datestamp: Float
+  url: String
+  title: String
+  project: Project
+}
+
+input BooleanYN_comparison_exp {
+  EQ: BOOLEANYN
+  IN: [BOOLEANYN!]
+  NEQ: BOOLEANYN
+  NIN: [BOOLEANYN!]
+}
+
+input Boolean_comparison_exp {
+  EQ: Boolean
+  IN: [Boolean!]
+  NEQ: Boolean
+}
+
+# Contact Status
+enum CONTACTSTATUS {
+  active
+  deleted
+  archived
+}
+
+input CONTACTSTATUS_comparison_exp {
+  EQ: CONTACTSTATUS
+  NEQ: CONTACTSTATUS
+  IN: [CONTACTSTATUS!]
+  NIN: [CONTACTSTATUS!]
+}
+
+# valid values are client, contractor, staff or other
+scalar CONTACTTYPE
+
+input CONTACTTYPE_comparison_exp {
+  EQ: CONTACTTYPE
+  NEQ: CONTACTTYPE
+  IN: [CONTACTTYPE!]
+  NIN: [CONTACTTYPE!]
+}
+
+enum CUSTOMFIELDTYPE {
+  checkbox
+  date
+  dropdown
+  number
+  percentage
+  rating
+  staff
+  text
+}
+
+input CUSTOMFIELDTYPE_comparison_exp {
+  EQ: CUSTOMFIELDTYPE
+  NEQ: CUSTOMFIELDTYPE
+  IN: [CUSTOMFIELDTYPE!]
+  NIN: [CUSTOMFIELDTYPE!]
+}
+
+input CheckScheduleEvents {
+  date: DATEINPUTFORMAT
+  hour: HOUR!
+  minute: MINUTE30!
+}
+
+# A field whose value conforms to HEX color value eg FFFF00.
+scalar Color
+
+type Company {
+  id: ID!
+  datestamp: Float
+  pending: Boolean
+  name: String
+  status: CONTACTSTATUS
+  code: String
+  type: CONTACTTYPE
+  email: String
+  phone: String
+  fax: String
+  website: String
+  address1: String
+  address2: String
+  address3: String
+  city: String
+  state: String
+  zipcode: String
+  country: String
+  twitter: String
+  facebook: String
+  linkedin: String
+  avatarname: String
+  companynotes: [ContactNote]
+  division: Division
+  tags(input: ContactTag_bool_exp = { deleted: { EQ: false } }): [ContactTag]
+  apifields(
+    input: ApifieldValue_bool_exp = {
+      deleted: { EQ: false }
+      type: { EQ: company }
+    }
+  ): [ApifieldValue]
+  contacts(
+    input: Contact_bool_exp = { status: { IN: [active, archived] } }
+  ): [Contact]
+  projects(
+    input: Project_bool_exp = {
+      deleted: { EQ: false }
+      request: { EQ: false }
+      template: { EQ: false }
+    }
+  ): [Project]
+  quotes(input: Quote_bool_exp = { template: { EQ: false } }): [Quote]
+  quotetotal(input: Quote_bool_exp = { template: { EQ: false } }): Aggregate
+  expenses(input: Expense_bool_exp = { active: { EQ: true } }): [Expense]
+  expensetotal(input: Expense_bool_exp = { active: { EQ: true } }): Aggregate
+  invoices(input: Invoice_bool_exp = { template: { EQ: false } }): [Invoice]
+  invoicetotal(input: Invoice_bool_exp = { template: { EQ: false } }): Aggregate
+}
+
+input CompanyFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [Company_orderby!]
+
+  #  filter the rows returned
+  where: Company_bool_exp
+}
+
+input Company_bool_exp {
+  AND: [Company_bool_exp]
+
+  #  NOT: Company_bool_exp
+  OR: [Company_bool_exp]
+  id: Int_comparison_exp
+  tagid: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  status: CONTACTSTATUS_comparison_exp
+  pending: Boolean_comparison_exp
+  type: CONTACTTYPE_comparison_exp
+  name: String_comparison_exp
+  Project: Project_bool_exp
+  Contact: Contact_bool_exp
+}
+
+#  ordering options when selecting data
+input Company_orderby {
+  id: orderby
+  code: orderby
+  name: orderby
+  datestamp: orderby
+}
+
+type Contact {
+  id: ID!
+  auditlog(input: AuditLog_bool_exp): [AuditLog]
+  companyid: Int
+  divisionid: Int
+  account: Account
+  datestamp: Float
+  lastupdated: DATETIMEFORMAT
+  timezoneadjustment: Int
+  usertime: DATETIMEFORMAT
+  allowlogin: Boolean
+  timesheetlocked: Boolean
+  projectvariable: String
+  pending: Boolean
+  showhistoric: Boolean
+  defaultviewer: Viewer
+  emailalerts: Boolean
+  email: EmailAddress
+  filterview: String
+  status: CONTACTSTATUS
+  type: CONTACTTYPE
+  firstname: String
+  lastname: String
+  fullname: String
+  username: String
+  latitude: String
+  longitude: String
+  workphone: String
+  mobilephone: String
+  fax: String
+  address1: String
+  address2: String
+  address3: String
+  city: String
+  state: String
+  zipcode: String
+  county: String
+  image: String
+  startpage: String
+  icalevents: Boolean
+  icalgeneraltasks: Boolean
+  emailsignature: String
+  viewallcompanyprojects: Boolean
+  viewalltasks: Boolean
+  viewallcompanyarchiveprojects: Boolean
+  globaluid: String
+  otpsecret: String
+  otpstatus: OTPSTATUS
+  apifields(
+    input: ApifieldValue_bool_exp = {
+      deleted: { EQ: false }
+      type: { EQ: contact }
+    }
+  ): [ApifieldValue]
+  company: Company
+  servicerate: HourlyRateService
+  pay: StaffHourlyPay
+  groupid: ArrayOfIntegers
+  groups(input: Group_bool_exp = { deleted: { EQ: false } }): [Group]
+  roleid: ArrayOfIntegers
+  roles(input: Role_bool_exp = { deleted: { EQ: false } }): [Role]
+  token: Token
+  teams(input: Team_bool_exp): [Team]
+  division: Division
+  contactnotes: [ContactNote]
+  expenses(input: Expense_bool_exp = { active: { EQ: true } }): [Expense]
+  notes: [Note]
+  projects(
+    input: Project_bool_exp = {
+      deleted: { EQ: false }
+      request: { EQ: false }
+      template: { EQ: false }
+    }
+  ): [Project]
+  managedprojects(
+    input: Project_bool_exp = {
+      deleted: { EQ: false }
+      request: { EQ: false }
+      template: { EQ: false }
+    }
+  ): [Project]
+  reports(input: Report_bool_exp = { status: { EQ: active } }): [Report]
+  tasks(input: Task_bool_exp = { deleted: { EQ: false } }): [Task]
+  tags(input: ContactTag_bool_exp = { deleted: { EQ: false } }): [ContactTag]
+  filteredtimespent(
+    input: Timerecord_bool_exp = {
+      deleted: { EQ: false }
+      running: { EQ: false }
+    }
+  ): Aggregate
+  timerecords(
+    input: Timerecord_bool_exp = {
+      deleted: { EQ: false }
+      running: { EQ: false }
+    }
+  ): [Timerecord]
+  userpermissions: [UserPermission]
+  uniquetoken: String
+}
+
+input ContactFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [Contact_orderby!]
+
+  #  filter the rows returned
+  where: Contact_bool_exp
+}
+
+type ContactNote {
+  id: ID!
+  note: String
+  notetype: String
+  datecreated: String
+  datestamp: Float
+
+  # division: Division
+  contact: Contact
+  company: Company
+}
+
+input ContactOTPSecret {
+  otpsecret: String
+}
+
+type ContactTag {
+  id: ID!
+  datestamp: Float
+  displayorder: Int
+  divisionid: Int
+  companyid: ArrayOfIntegers
+  contactid: ArrayOfIntegers
+  deleted: Boolean
+  name: String
+  color: String
+  division: Division
+  contacts(
+    input: Contact_bool_exp = { status: { IN: [active, archived] } }
+  ): [Contact]
+  companies(input: Company_bool_exp): [Company]
+}
+
+input ContactTagFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [ContactTag_orderby!]
+
+  #  filter the rows returned
+  where: ContactTag_bool_exp
+}
+
+input ContactTag_bool_exp {
+  AND: [ContactTag_bool_exp]
+
+  #  NOT: ContactTag_bool_exp
+  OR: [ContactTag_bool_exp]
+  id: Int_comparison_exp
+  contactid: Int_comparison_exp
+  companyid: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  deleted: Boolean_comparison_exp = { EQ: false }
+}
+
+#  ordering options when selecting data
+input ContactTag_orderby {
+  id: orderby
+  displayorder: orderby
+  name: orderby
+}
+
+input Contact_bool_exp {
+  AND: [Contact_bool_exp]
+
+  #  NOT: Contact_bool_exp
+  OR: [Contact_bool_exp]
+  id: Int_comparison_exp
+  companyid: Int_comparison_exp
+  taskid: Int_comparison_exp
+  projectid: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  groupid: Int_comparison_exp
+  contactgroup_groupid: Int_comparison_exp
+  tagid: Int_comparison_exp
+  pending: Boolean_comparison_exp
+  allowlogin: Boolean_comparison_exp
+  deleted: Boolean_comparison_exp
+  lastupdated: Date_comparison_exp
+  status: CONTACTSTATUS_comparison_exp = { IN: [active, archived] }
+  type: CONTACTTYPE_comparison_exp
+
+  # haspermission: HASPERMISSION_comparison_exp
+  fullname: String_comparison_exp
+  firstname: String_comparison_exp
+  lastname: String_comparison_exp
+  showhistoric: Boolean_comparison_exp
+  Project: Project_bool_exp
+  uniquetoken: String_comparison_exp
+  UserPermission: UserPermission_bool_exp
+}
+
+#  ordering options when selecting data
+input Contact_orderby {
+  id: orderby
+  companyid: orderby
+  email: orderby
+  firstname: orderby
+  fullname: orderby
+  lastname: orderby
+  datestamp: orderby
+}
+
+input CreateBoardColumnInput {
+  projectid: Int!
+  name: Text!
+  color: Color!
+  order: Int = 0
+  deleted: Boolean = false
+}
+
+input CreateCompanyInput {
+  name: String!
+  divisionid: Int!
+  type: CONTACTTYPE!
+  pending: Boolean = false
+  status: CONTACTSTATUS = active
+  code: String
+  email: String
+  phone: String
+  fax: String
+  website: String
+  address1: String
+  address2: String
+  address3: String
+  city: String
+  state: String
+  zipcode: String
+  country: String
+  twitter: String
+  facebook: String
+  linkedin: String
+  avatarname: String
+}
+
+input CreateCustomFieldInput {
+  name: String
+  deleted: Boolean = false
+  order: Int = 0
+  staffonly: Boolean
+  active: BOOLEANACTIVEINACTIVE = true
+}
+
+input CreateGroupInput {
+  name: String!
+  displayorder: Float = 0
+  deleted: Boolean = false
+  teamid: Int!
+}
+
+input CreateHourlyRateServiceInput {
+  name: String!
+  description: String
+  servicecost: Float!
+  taxable: Boolean = true
+  deleted: Boolean = false
+}
+
+input CreateInternalProjectInput {
+  # customfieldoptionid: ArrayOfIntegers
+  # request: Boolean
+  # template: Boolean
+  accountedfor: BOOLEANYN
+  categoryid: Int
+  clientaccess: Boolean
+  clientcontactid: Int!
+  clientgroupid: Int!
+  clientid: ArrayOfIntegers
+  clientteamid: Int
+  clientviewalltasks: Boolean
+  clientviewtime: Boolean
+  completedate: DATEFORMAT
+  contractorid: ArrayOfIntegers
+  customformcontent: HTML
+  customformtitle: Text
+  customstatusid: Int
+  deleted: Boolean
+  dependent: Boolean
+  description: HTML
+
+  # divisionid: Int
+  duedate: DATEFORMAT
+  groupid: Int
+  icalcontactid: ArrayOfIntegers
+  integrationsetting: JSONString
+  invoiced: BOOLEANYN
+  managerid: Int
+  manualquotetotal: Boolean
+  notification: Boolean
+  number: Text
+  overallocatedtime: Boolean
+  paid: BOOLEANYN
+  priority: PROJECTPRIORITY
+  privatenotes: Text
+  purchaseorder: String
+  showcompletedtasks: Boolean
+  smartorderingenabled: Boolean
+  staffid: ArrayOfIntegers
+  staffviewallmessages: Boolean
+  staffviewalltasks: Boolean
+  startdate: DATEFORMAT
+  status: PROJECTSTATUS
+  tagid: ArrayOfIntegers
+  teamid: Int
+  templateused: Int
+  timeallocated: Int
+  title: Text!
+  type: PROJECTTYPE = "internal"
+  usemanualinvoicetotal: Boolean
+  usemanualquotetotal: Boolean
+}
+
+input CreateLoginInput {
+  username: String
+  password: String
+  token: String
+  account: AccountCreateLoginInput
+}
+
+input CreateOAuthClientInput {
+  uid: String!
+  clientName: String!
+  clientSecret: String!
+  redirectUris: String!
+  responseTypes: String!
+  grantTypes: String!
+  scope: String!
+  deleted: Boolean!
+  summary: String!
+  description: String!
+  developerName: String!
+  url: String!
+  privacyUrl: String!
+  termsUrl: String!
+  iconUrl: String!
+}
+
+input CreateProjectInput {
+  # customfieldoptionid: ArrayOfIntegers
+  # request: Boolean
+  # template: Boolean
+  accountedfor: BOOLEANYN
+  categoryid: Int
+  clientaccess: Boolean
+  clientid: ArrayOfIntegers
+  clientteamid: Int
+  clientviewalltasks: Boolean
+  clientviewtime: Boolean
+  companyid: Int!
+  completedate: DATEFORMAT
+  contractorid: ArrayOfIntegers
+  customformcontent: HTML
+  customformtitle: Text
+  customstatusid: Int
+  deleted: Boolean
+  dependent: Boolean
+  description: HTML
+
+  # divisionid: Int
+  duedate: DATEFORMAT
+  groupid: Int
+  icalcontactid: ArrayOfIntegers
+  integrationsetting: JSONString
+  invoiced: BOOLEANYN
+  managerid: Int
+  manualquotetotal: Boolean
+  notification: Boolean
+  number: Text
+  overallocatedtime: Boolean
+  paid: BOOLEANYN
+  priority: PROJECTPRIORITY
+  privatenotes: Text
+  purchaseorder: String
+  showcompletedtasks: Boolean
+  smartorderingenabled: Boolean
+  staffid: ArrayOfIntegers
+  staffviewallmessages: Boolean
+  staffviewalltasks: Boolean
+  startdate: DATEFORMAT
+  status: PROJECTSTATUS
+  tagid: ArrayOfIntegers
+  teamid: Int
+  templateused: Int
+  timeallocated: Int
+  title: Text!
+  type: PROJECTTYPE = "external"
+  usemanualinvoicetotal: Boolean
+  usemanualquotetotal: Boolean
+}
+
+input CreateProjectLineItemInput {
+  name: String!
+  projectid: Int!
+  quoteid: Int
+  displayorder: Int = 0
+  deleted: Boolean = false
+  quantity: Int
+  chargerate: Float
+  internalcost: Float
+  taxable: Boolean = true
+  invoiced: Boolean = false
+  status: PROJECTLINEITEMSTATUS!
+  type: LINEITEMTYPE!
+  description: String
+}
+
+input CreateProjectTagInput {
+  name: String!
+  color: String
+  displayorder: Int
+  deleted: Boolean = false
+}
+
+input CreateReportInput {
+  reporttemplateid: Int!
+  name: Text!
+  settings: ReportSettingInput!
+  version: Int = 1
+  scheduleid: Int
+  ispublic: Boolean = false
+  description: SimpleHTML = ""
+  status: CONTACTSTATUS = active
+  sharedcontactid: ArrayOfIntegers
+  schedulecontactid: ArrayOfIntegers
+}
+
+input CreateReportTemplateGroupInput {
+  name: Text!
+  type: REPORTTYPE!
+  description: SimpleHTML = ""
+  version: Int = 1
+  deleted: Boolean = false
+}
+
+input CreateReportTemplateInput {
+  name: Text!
+  title: Text!
+  displaytype: REPORTDISPLAYTYPE!
+  settings: ReportSettingInput!
+  version: Int = 0
+  deleted: Boolean = false
+  advanced: Boolean = false
+  reporttemplategroupid: Int = 0
+  twinid: Int = 0
+}
+
+input CreateSchedule {
+  type: SCHEDULETYPE!
+  objectid: Int
+  recipientid: [Int]
+  endpoint: String!
+  postvars: String
+  minute: MINUTE30!
+  hour: HOUR!
+  daysofweek: String!
+  status: SCHEDULESTATUS = active
+  daysofmonth: String!
+  startdate: DATETIMEFORMAT
+  enddate: DATETIMEFORMAT
+}
+
+input CreateScheduleEvent {
+  scheduleid: Int
+  uuid: String
+  scheduledate: DATETIMEFORMAT!
+  startdate: DATETIMEFORMAT
+  completedate: DATETIMEFORMAT
+  status: SCHEDULEEVENTSTATUS
+  errorcount: Int
+  details: String
+}
+
+input CreateTaskInput {
+  #  task created by contact id ( possibly should be inserted)
+  #  managerid: Int!
+  billable: Boolean
+  boardcolumnid: Int
+  categoryid: Int
+  completedate: DATEFORMAT
+
+  #  contact assigned to field. supplied as a list of Ints. Overrides previous values
+  contactid: ArrayOfIntegers
+  currenttask: Boolean
+  deleted: Boolean
+  dependent: Boolean
+  description: String
+  displaytype: DISPLAYTYPE = normal
+  duedate: DATEFORMAT
+  name: String!
+  ordernumber: OrderNumber
+
+  #  supplied as a list of Ints. Overrides previous values
+  prerequisiteid: ArrayOfIntegers
+  priority: PROJECTPRIORITY = "medium"
+  projectid: Int!
+  servicecost: Float
+  servicedescription: String
+  servicename: String
+  startdate: DATEFORMAT
+  status: TASKSTATUS = "active"
+  tagid: ArrayOfIntegers
+  taxable: Boolean
+  timeallocated: Int
+  type: TASKTYPE
+}
+
+input CreateTimerecordInput {
+  taskid: Int!
+  startdate: DATETIMEFORMAT!
+  timespent: Int!
+  notes: Text = ""
+  deleted: Boolean = false
+  running: Boolean = false
+}
+
+input CreateUserViewMenuInput {
+  contactid: Int!
+  viewconfigid: Int!
+  displayorder: Int
+}
+
+input CreateViewConfigInput {
+  fields: ArrayOfStrings!
+  filters: JSONString!
+  sortOrder: String!
+  viewGroup: String!
+  name: Text!
+  deleted: Boolean = false
+  active: Boolean = true
+  visible: Boolean = true
+  type: VIEWCONFIGTYPEINPUT!
+  section: VIEWCONFIGSECTION!
+}
+
+type Currency {
+  id: ID!
+  datestamp: Float
+  divisionid: Int
+  name: String
+  symbol: String
+}
+
+type CustomField {
+  id: ID!
+  divisionid: Int
+  datestamp: Float
+  deleted: Boolean
+  order: Int
+  staffonly: Boolean
+  name: String
+  type: CUSTOMFIELDTYPE
+  active: BOOLEANACTIVEINACTIVE
+  division: Division
+  options(input: CustomFieldOption_bool_exp): [CustomFieldOption]
+  projects(
+    input: Project_bool_exp = {
+      deleted: { EQ: false }
+      request: { EQ: false }
+      template: { EQ: false }
+    }
+  ): [Project]
+}
+
+input CustomFieldFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [CustomField_orderby!]
+
+  #  filter the rows returned
+  where: CustomField_bool_exp
+}
+
+type CustomFieldOption {
+  id: ID!
+  datestamp: Float
+  deleted: Boolean
+  order: Int
+  name: String
+  customfield: CustomField
+  projects(
+    input: Project_bool_exp = {
+      deleted: { EQ: false }
+      request: { EQ: false }
+      template: { EQ: false }
+    }
+  ): [Project]
+}
+
+input CustomFieldOptionFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [CustomFieldOption_orderby!]
+
+  #  filter the rows returned
+  where: CustomFieldOption_bool_exp
+}
+
+input CustomFieldOption_bool_exp {
+  AND: [CustomFieldOption_bool_exp]
+
+  #  NOT: CustomFieldOption_bool_exp
+  OR: [CustomFieldOption_bool_exp]
+  id: Int_comparison_exp
+  customfieldid: Int_comparison_exp
+  projectid: Int_comparison_exp
+  deleted: Boolean_comparison_exp
+  name: String_comparison_exp
+}
+
+#  ordering options when selecting data
+input CustomFieldOption_orderby {
+  id: orderby
+  name: orderby
+  order: orderby
+}
+
+input CustomField_bool_exp {
+  AND: [CustomField_bool_exp]
+
+  #  NOT: CustomField_bool_exp
+  OR: [CustomField_bool_exp]
+  id: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  type: CUSTOMFIELDTYPE_comparison_exp
+  deleted: Boolean_comparison_exp
+  staffonly: Boolean_comparison_exp
+  active: BOOLEANACTIVEINACTIVE_comparison_exp
+}
+
+#  ordering options when selecting data
+input CustomField_orderby {
+  id: orderby
+  name: orderby
+  order: orderby
+}
+
+type CustomStatus {
+  id: ID!
+  order: Float
+  datestamp: Float
+  deleted: Boolean
+  color: String
+  name: String
+  projects(
+    input: Project_bool_exp = {
+      deleted: { EQ: false }
+      request: { EQ: false }
+      template: { EQ: false }
+    }
+  ): [Project]
+  team: Team
+  division: Division
+}
+
+input CustomStatusFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [CustomStatus_orderby!]
+
+  #  filter the rows returned
+  where: CustomStatus_bool_exp
+}
+
+input CustomStatus_bool_exp {
+  AND: [CustomStatus_bool_exp]
+
+  #  NOT: CustomStatus_bool_exp
+  OR: [CustomStatus_bool_exp]
+  id: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  teamid: Int_comparison_exp
+  deleted: Boolean_comparison_exp = { EQ: false }
+}
+
+#  ordering options when selecting data
+input CustomStatus_orderby {
+  id: orderby
+  name: orderby
+  order: orderby
+}
+
+# A field whose value conforms to YYYY-MM-DD. Empty string is valid
+scalar DATEFORMAT
+
+# A field whose value conforms to YYYY-MM-DD.
+scalar DATEINPUTFORMAT
+
+# A field whose value conforms to YYYY-MM-DD. Empty string is valid
+scalar DATETIMEFORMAT
+
+# A field whose value conforms to YYYY-MM-DDTHH:MM:SS.
+scalar DATETIMEINPUTFORMAT
+
+# A custom scalar decimal
+scalar DECIMAL
+
+# Task Display Type
+enum DISPLAYTYPE {
+  normal
+  bold
+  heading
+}
+
+input DISPLAYTYPE_comparison_exp {
+  EQ: DISPLAYTYPE
+  NEQ: DISPLAYTYPE
+  IN: [DISPLAYTYPE!]
+  NIN: [DISPLAYTYPE!]
+}
+
+input DateTime_comparison_exp {
+  EQ: DATETIMEINPUTFORMAT
+  GT: DATETIMEINPUTFORMAT
+  GTE: DATETIMEINPUTFORMAT
+  IS_NULL: Boolean
+  LT: DATETIMEINPUTFORMAT
+  LTE: DATETIMEINPUTFORMAT
+}
+
+input Date_comparison_exp {
+  EQ: DATEINPUTFORMAT
+  GT: DATEINPUTFORMAT
+  GTE: DATEINPUTFORMAT
+  IS_NULL: Boolean
+  LT: DATEINPUTFORMAT
+  LTE: DATEINPUTFORMAT
+  REL: RELATIVEDATE
+}
+
+input Date_comparison_exp_required {
+  GTE: DATEINPUTFORMAT!
+  LTE: DATEINPUTFORMAT!
+}
+
+input DeleteGroupInput {
+  id: Int!
+}
+
+type Division {
+  id: ID!
+  datestamp: Float
+  timezoneadjustment: Int
+  name: String
+  currencyid: Int
+  otpstaff: Boolean
+  otpclient: Boolean
+  otpcontractor: Boolean
+  otpstaffrequired: Boolean
+
+  #  financialOTP: Boolean
+  companies(input: Company_bool_exp): [Company]
+  contacts(
+    input: Contact_bool_exp = { status: { IN: [active, archived] } }
+  ): [Contact]
+  currency: Currency
+  divisionsetting: DivisionSetting
+  invoicesettings: DivisionInvoiceSettings
+  quotesettings: DivisionQuoteSettings
+  invoices(input: Invoice_bool_exp = { template: { EQ: false } }): [Invoice]
+  notecategories: [NoteCategory]
+  projectcategories(input: ProjectCategory_bool_exp): [ProjectCategory]
+  projects(
+    input: Project_bool_exp = {
+      deleted: { EQ: false }
+      request: { EQ: false }
+      template: { EQ: false }
+    }
+  ): [Project]
+  projectcount: Aggregate
+  invoicecount: Aggregate
+  quotes(input: Quote_bool_exp = { template: { EQ: false } }): [Quote]
+  tags(input: ContactTag_bool_exp = { deleted: { EQ: false } }): [ContactTag]
+  taskcategories: [TaskCategory]
+  tasks(input: Task_bool_exp = { deleted: { EQ: false } }): [Task]
+  teams(input: Team_bool_exp): [Team]
+}
+
+type DivisionInvoiceSettings {
+  id: ID!
+  uselogo: Boolean
+  logofilename: String
+  toppxlheight: Int
+  pagewidth: Int
+  taxrate: Float
+  paymentterms: String
+  paymentperiod: Int
+  remitanceadvice: String
+  customfieldname1: String
+  customfieldcontents1: String
+  clientemailsubject: String
+  clientemailfromaddress: String
+  invoicepagetitle: String
+  invoicepagesubtitle: String
+  footerdetails: String
+  fixedcostsettings: Boolean
+  quotedservicestitle: String
+  hourlyrateservicestitle: String
+  projectexpensestitle: String
+  fixedcosttitle: String
+  displaynoamount: Boolean
+  displaycontact: Boolean
+  contactfooter: String
+  divisionid: Int
+  importmodulesetting: String
+  displayphone: Boolean
+  displayfax: Boolean
+  defaultrecordsetcreateinvoice: Int
+  defaultrecordsetpastinvoice: Int
+  recordset1createinvoice: String
+  recordset1pastinvoice: String
+  recordset2createinvoice: String
+  recordset2pastinvoice: String
+  recordset3createinvoice: String
+  recordset3pastinvoice: String
+  bccemail: Boolean
+  newlayout: Boolean
+}
+
+type DivisionQuoteSettings {
+  id: ID!
+  uselogo: Boolean
+  logofilename: String
+  toppxlheight: Int
+  pagewidth: Int
+  taxrate: Float
+  quoteterms: String
+  usequoteterms: Boolean
+  quoteperiod: Int
+  customfieldname1: String
+  customfieldcontents1: String
+  clientemailsubject: String
+  clientemailfromaddress: String
+  quotepagetitle: String
+  estimatepagetitle: String
+  quotedby: String
+  fixedcostsettings: Boolean
+  quotedservicestitle: String
+  hourlyrateservicestitle: String
+  projectexpensestitle: String
+  fixedcosttitle: String
+  displaycontact: Boolean
+  displaynoamount: Boolean
+  contactfooter: String
+  divisionid: Int
+  displayphone: Boolean
+  displayfax: Boolean
+  defaultrecordsetcurrentquote: Int
+  defaultrecordsetpastquote: Int
+  recordset1currentquote: String
+  recordset1pastquote: String
+  recordset2currentquote: String
+  recordset2pastquote: String
+  recordset3currentquote: String
+  recordset3pastquote: String
+  bccemail: Boolean
+  newlayout: Boolean
+}
+
+type DivisionSetting {
+  id: Int
+  datestamp: Float
+  projectnumbercount: Int
+  invoicenumbercount: Int
+  quotenumbercount: Int
+  projectnumberplaceholder: Int
+  invoicenumberplaceholder: Int
+  quotenumberplaceholder: Int
+  pdfrightmargin: Float
+  pdfleftmargin: Float
+  pdftopmargin: Float
+  pdfbottommargin: Float
+  taskordering: Boolean
+  emptyprojectcategory: Boolean
+  emptytaskcategory: Boolean
+  emptynotecategory: Boolean
+  clientviewpublicmessages: Boolean
+  contractorviewpublicmessages: Boolean
+  enableaddusers: Boolean
+  autoprojectnumber: Boolean
+  autoinvoicenumber: Boolean
+  autoquotenumber: Boolean
+  projectnotification: Boolean
+  custompagetitle: Boolean
+  logo: String
+  reportslogo: String
+  reportsuselogo: Boolean
+  loginurl: String
+  logouturl: String
+  defaultemail: String
+  projectrequestemail: String
+  dbversion: String
+  addusertitle: String
+  adduserinfo: String
+  headertitle: String
+  headerprimary: String
+  headersecondary: String
+  headertext: String
+  tab: String
+  tabhover: String
+  tabtexthover: String
+  linktext: String
+  linktexthover: String
+  headerlink: String
+  helplink: String
+  headerlinkhover: String
+  metatitle: String
+  metacontent: String
+  unacceptedfiletypes: String
+  projectvariable: String
+  customfieldvariable: String
+  emailsignature: String
+  projectnumbertype: String
+  projectnumbermask: String
+  invoicenumbermask: String
+  quotenumbermask: String
+  customsettings: String
+  pdfunit: String
+  pdfsize: String
+  pdforientation: String
+  dateformat: String
+}
+
+enum ENVIRONMENT {
+  development
+  staging
+  production
+  productionapi
+  productionreport
+}
+
+# A field whose value conforms to the standard internet email address format as specified in RFC822: https://www.w3.org/Protocols/rfc822/. empty string is valid
+scalar EmailAddress
+
+type Expense {
+  id: ID!
+  datestamp: Float
+  amount: Float
+  active: Boolean
+  taxable: Boolean
+  invoiced: Boolean
+  name: String
+  expensedate: DATEFORMAT
+  description: String
+  contact: Contact
+  division: Division
+  project: Project
+}
+
+input ExpenseFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [Expense_orderby!]
+
+  #  filter the rows returned
+  where: Expense_bool_exp
+}
+
+input Expense_bool_exp {
+  AND: [Expense_bool_exp]
+
+  #  NOT: Expense_bool_exp
+  OR: [Expense_bool_exp]
+  id: Int_comparison_exp
+  contactid: Int_comparison_exp
+  projectid: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  taxable: Boolean_comparison_exp
+  active: Boolean_comparison_exp = { EQ: true }
+  invoiced: Boolean_comparison_exp
+  expensedate: Date_comparison_exp
+  amount: Int_comparison_exp
+  includenoexpensedate: Boolean_comparison_exp
+  Project: Project_bool_exp
+}
+
+#  ordering options when selecting data
+input Expense_orderby {
+  id: orderby
+  name: orderby
+  expensedate: orderby
+}
+
+input FavouriteReportInput {
+  reportid: Int!
+}
+
+type File {
+  id: ID!
+  name: String
+  description: String
+  size: Int
+  modified: DATETIMEFORMAT
+  deleted: Boolean
+  datestamp: Float
+  project: Project
+  owner: Contact
+  ownerid: Int
+  task: Task
+  folder: Folder
+}
+
+input FileFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [File_orderby!]
+
+  #  filter the rows returned
+  where: File_bool_exp
+}
+
+input File_bool_exp {
+  AND: [File_bool_exp]
+
+  #  NOT: File_bool_exp
+  OR: [File_bool_exp]
+  id: Int_comparison_exp
+  size: Int_comparison_exp
+  name: String_comparison_exp
+  modified: Date_comparison_exp
+  folderid: Int_comparison_exp
+  ownerid: Int_comparison_exp
+  projectid: Int_comparison_exp
+  taskid: Int_comparison_exp
+  deleted: Boolean_comparison_exp = { EQ: false }
+  Project: Project_bool_exp
+  Task: Task_bool_exp
+}
+
+#  ordering options when selecting data
+input File_orderby {
+  id: orderby
+}
+
+union FilterSelectedOptions =
+    Contact
+  | Group
+  | Team
+  | ProjectCategory
+  | CustomFieldOption
+  | Company
+  | CustomStatus
+  | Project
+  | TaskCategory
+
+input Float_comparison_exp {
+  EQ: Float
+  GT: Float
+  GTE: Float
+  IN: [Float!]
+  IS_NULL: Boolean
+  LT: Float
+  LTE: Float
+  NEQ: Float
+  NIN: [Float!]
+}
+
+type Folder {
+  id: ID!
+  name: String
+  description: String
+  type: String
+  size: Int
+  modified: DATETIMEFORMAT
+  deleted: Boolean
+  datestamp: Float
+  owner: Contact
+  project: Project
+  files(input: File_bool_exp = { deleted: { EQ: false } }): [File]
+  task: Task
+}
+
+input FolderFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [Folder_orderby!]
+
+  #  filter the rows returned
+  where: Folder_bool_exp
+}
+
+input Folder_bool_exp {
+  AND: [Folder_bool_exp]
+
+  #  NOT: Folder_bool_exp
+  OR: [Folder_bool_exp]
+  id: Int_comparison_exp
+  ownerid: Int_comparison_exp
+  projectid: Int_comparison_exp
+  deleted: Boolean_comparison_exp = { EQ: false }
+  Project: Project_bool_exp
+  File: File_bool_exp
+}
+
+#  ordering options when selecting data
+input Folder_orderby {
+  id: orderby
+}
+
+# A field whose value a valid GUID (Globally Unique Identifier)
+scalar GUID
+
+#  expression to compare columns of type GUID. All fields are combined with logical 'AND'.
+input GUID_comparison_exp {
+  EQ: GUID
+
+  #  _ilike: GUID
+  IN: [GUID!]
+  IS_NULL: Boolean
+  LIKE: GUID
+  NEQ: GUID
+
+  #  _nilike: GUID
+  NIN: [GUID!]
+}
+
+type GeneralObject {
+  id: Int
+}
+
+type Group {
+  id: ID!
+  teamid: Int
+  datestamp: Float
+  deleted: Boolean
+  displayorder: Float
+  name: String
+  division: Division
+  team: Team
+  contacts(
+    input: Contact_bool_exp = { status: { IN: [active, archived] } }
+  ): [Contact]
+  projects(
+    input: Project_bool_exp = {
+      deleted: { EQ: false }
+      request: { EQ: false }
+      template: { EQ: false }
+    }
+  ): [Project]
+}
+
+input GroupFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [Group_orderby!]
+
+  #  filter the rows returned
+  where: Group_bool_exp
+}
+
+input Group_bool_exp {
+  AND: [Group_bool_exp]
+
+  #  NOT: Group_bool_exp
+  OR: [Group_bool_exp]
+  id: Int_comparison_exp
+  teamid: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  deleted: Boolean_comparison_exp = { EQ: false }
+}
+
+#  ordering options when selecting data
+input Group_orderby {
+  id: orderby
+}
+
+enum HASPERMISSION {
+  viewreport
+  edittime
+  viewpayrate
+}
+
+# A field whose value conforms to 24 Hour eg 0-23.
+scalar HOUR
+
+# HTML text: all tags
+scalar HTML
+
+type HourlyRateService {
+  id: ID!
+  name: String
+  description: String
+  servicecost: Float
+  taxable: Boolean
+  deleted: Boolean
+  order: Int
+}
+
+input HourlyRateServiceFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [HourlyRateService_orderby!]
+
+  #  filter the rows returned
+  where: HourlyRateService_bool_exp
+}
+
+input HourlyRateService_bool_exp {
+  AND: [HourlyRateService_bool_exp]
+
+  #  NOT: HourlyRateService_bool_exp
+  OR: [HourlyRateService_bool_exp]
+  id: Int_comparison_exp
+  deleted: Boolean_comparison_exp = { EQ: false }
+  taxable: Boolean_comparison_exp
+}
+
+#  ordering options when selecting data
+input HourlyRateService_orderby {
+  id: orderby
+  order: orderby
+  name: orderby
+}
+
+enum INSTANCEENUM {
+  test
+  dev
+  asia
+  usa
+  euro
+  ni
+  trial
+}
+
+input INSTANCEENUM_comparison_exp {
+  EQ: INSTANCEENUM
+  IN: [INSTANCEENUM]
+  NEQ: INSTANCEENUM
+  NIN: [INSTANCEENUM!]
+}
+
+enum INVOICELINEITEMTYPE {
+  heading
+  lineitem
+  staffrate
+  taskrate
+}
+
+input INVOICELINEITEMTYPE_comparison_exp {
+  EQ: INVOICELINEITEMTYPE
+  IN: [INVOICELINEITEMTYPE]
+  NEQ: INVOICELINEITEMTYPE
+  NIN: [INVOICELINEITEMTYPE!]
+}
+
+enum INVOICESTATUS {
+  current
+  deleted
+  template
+  archived
+}
+
+input INVOICESTATUS_comparison_exp {
+  EQ: INVOICESTATUS
+  NEQ: INVOICESTATUS
+  IN: [INVOICESTATUS!]
+  NIN: [INVOICESTATUS!]
+}
+
+#  expression to compare columns of type Int. All fields are combined with logical 'AND'.
+input Int_comparison_exp {
+  EQ: Int
+  GT: Int
+  GTE: Int
+  IN: [Int!]
+  IS_NULL: Boolean
+  LT: Int
+  LTE: Int
+  NEQ: Int
+  NIN: [Int!]
+}
+
+type Invoice {
+  id: ID!
+  datestamp: Float
+  title: String
+  emailedtoclient: Boolean
+  showcostbreakdown: Boolean
+  template: Boolean
+  newlayout: Boolean
+  taxable: NEGATEDBIT
+  paid: Boolean
+  paiddate: DATEFORMAT
+  invoicedate: DATEFORMAT
+  duedate: DATEFORMAT
+  emaileddate: DATEFORMAT
+  number: String
+  purchaseordernumber: String
+  invoicedby: String
+  emailsentto: String
+  status: String
+  taxrate: Float
+  topmargin: Int
+  pagewidth: Int
+  paymentperiod: Int
+  discount: Float
+  description: String
+  terms: String
+  contactfooter: String
+  footerdetails: String
+  customfieldname: String
+  customfieldvalue: String
+  pagetitle: String
+  logo: String
+  client: String
+  clientcompany: String
+  discountdescription: String
+  discounttype: String
+  address1: String
+  address2: String
+  address3: String
+  city: String
+  state: String
+  zipcode: String
+  country: String
+  phone: String
+  fax: String
+  subtotal: Float
+  taxtotal: Float
+  grandtotal: Float
+  lastupdated: DATETIMEFORMAT
+  company: Company
+  project: Project
+  division: Division
+  mswordlayout(input: MSWordLayoutFilter = { where: {} }): MSWordLayout
+  invoicelineitems: [InvoiceLineItem]
+  invoicelineitemtotal(input: InvoiceLineItem_bool_exp): Aggregate
+  invoicediscounttotal(input: InvoiceLineItem_bool_exp): Aggregate
+  apifields(
+    input: ApifieldValue_bool_exp = {
+      deleted: { EQ: false }
+      type: { EQ: invoice }
+    }
+  ): [ApifieldValue]
+  invoiceterm: InvoiceTerm
+}
+
+input InvoiceFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [Invoice_orderby!]
+
+  #  filter the rows returned
+  where: Invoice_bool_exp
+}
+
+type InvoiceLineItem {
+  id: ID!
+  invoice: Invoice
+  linetotal: Float
+  quantity: Float
+  rate: Float
+  displayorder: Int
+  datestamp: Float
+  taxable: Boolean
+  type: LINEITEMTYPE
+  name: String
+  description: String
+}
+
+input InvoiceLineItemFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [InvoiceLineItem_orderby!]
+
+  #  filter the rows returned
+  where: InvoiceLineItem_bool_exp
+}
+
+input InvoiceLineItem_bool_exp {
+  AND: [InvoiceLineItem_bool_exp]
+
+  #  NOT: InvoiceLineItem_bool_exp
+  OR: [InvoiceLineItem_bool_exp]
+  id: Int_comparison_exp
+  invoiceid: Int_comparison_exp
+  projectid: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  taxable: Boolean_comparison_exp
+  type: INVOICELINEITEMTYPE_comparison_exp
+  status: INVOICESTATUS_comparison_exp
+}
+
+#  ordering options when selecting data
+input InvoiceLineItem_orderby {
+  id: orderby
+}
+
+type InvoiceTerm {
+  id: ID!
+  divisionid: Int
+  termdays: Int
+  datestamp: Float
+  title: String
+  description: String
+}
+
+input Invoice_bool_exp {
+  AND: [Invoice_bool_exp]
+
+  #  NOT: Invoice_bool_exp
+  OR: [Invoice_bool_exp]
+  id: Int_comparison_exp
+  projectid: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  companyid: Int_comparison_exp
+  taxable: NEGATEDBIT_comparison_exp
+  template: Boolean_comparison_exp = { EQ: false }
+  paid: Boolean_comparison_exp
+  invoicedate: Date_comparison_exp
+  includenoinvoicedate: Boolean_comparison_exp
+  duedate: Date_comparison_exp
+  lastupdated: Date_comparison_exp
+  includenoduedate: Boolean_comparison_exp
+  paiddate: Date_comparison_exp
+  grandtotal: Float_comparison_exp
+  discount: Float_comparison_exp
+  discounttype: String_comparison_exp
+  includenopaiddate: Boolean_comparison_exp
+  emaileddate: Date_comparison_exp
+  invoicedby: String_comparison_exp
+  number: String_comparison_exp
+  title: String_comparison_exp
+  includenoemaileddate: Boolean_comparison_exp
+  status: INVOICESTATUS_comparison_exp
+
+  # project filters
+  Project: Project_bool_exp
+}
+
+#  ordering options when selecting data
+input Invoice_orderby {
+  id: orderby
+}
+
+# A JSON scalar
+scalar JSON
+
+# JSON stored as string
+scalar JSONString
+
+enum LINEITEMTYPE {
+  heading
+  lineitem
+  taskrate
+  staffrate
+  expense
+}
+
+enum MESSAGETYPE {
+  Task
+  Project
+}
+
+input MESSAGETYPE_comparison_exp {
+  EQ: MESSAGETYPE
+  NEQ: MESSAGETYPE
+  IN: [MESSAGETYPE!]
+  NIN: [MESSAGETYPE!]
+}
+
+# A field whose value is either 0 or 30.
+scalar MINUTE30
+
+#  #Project Type
+#  enum PROJECTTYPE {
+#    internal
+#    external
+#  }
+#  #Project Type
+#  enum PROJECTSTATUS {
+#    active
+#    complete
+#  }
+enum MSLAYOUTTYPE {
+  invoice
+  quote
+}
+
+input MSLAYOUTTYPE_comparison_exp {
+  EQ: MSLAYOUTTYPE
+  NEQ: MSLAYOUTTYPE
+  IN: [MSLAYOUTTYPE!]
+  NIN: [MSLAYOUTTYPE!]
+}
+
+type MSWordLayout {
+  id: ID!
+  name: Text
+  type: MSLAYOUTTYPE
+  deleted: Boolean
+  divisionid: Int
+  datestamp: Float
+}
+
+input MSWordLayoutFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [MSWordLayout_orderby!]
+
+  #  filter the rows returned
+  where: MSWordLayout_bool_exp
+}
+
+input MSWordLayout_bool_exp {
+  AND: [MSWordLayout_bool_exp]
+
+  #  NOT: MSWordLayout_bool_exp
+  OR: [MSWordLayout_bool_exp]
+  id: Int_comparison_exp
+  type: MSLAYOUTTYPE_comparison_exp
+  divisionid: Int_comparison_exp
+  name: String_comparison_exp
+}
+
+#  ordering options when selecting data
+input MSWordLayout_orderby {
+  id: orderby
+}
+
+type Message {
+  id: ID!
+  public: Boolean
+  deleted: Boolean
+  replycount: Int
+  contactid: ArrayOfIntegers
+  fileid: ArrayOfIntegers
+  files: [File]
+
+  # files: String
+  subject: String
+  details: String
+  type: MESSAGETYPE
+  senddate: DATETIMEFORMAT
+  datestamp: Float
+  contacts(
+    input: Contact_bool_exp = { status: { IN: [active, archived] } }
+  ): [Contact]
+  parent: Message
+  project: Project
+  sender: Contact
+  task: Task
+  replies(input: Message_bool_exp = { deleted: { EQ: false } }): [Message]
+}
+
+input MessageFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [Message_orderby!]
+
+  #  filter the rows returned
+  where: Message_bool_exp
+}
+
+input Message_bool_exp {
+  AND: [Message_bool_exp]
+
+  #  NOT: Message_bool_exp
+  OR: [Message_bool_exp]
+  id: Int_comparison_exp
+  contactid: Int_comparison_exp
+  parentid: Int_comparison_exp
+  type: MESSAGETYPE_comparison_exp
+  public: Boolean_comparison_exp
+  deleted: Boolean_comparison_exp
+  subject: String_comparison_exp
+  details: String_comparison_exp
+}
+
+#  ordering options when selecting data
+input Message_orderby {
+  id: orderby
+}
+
+# A field that represents a specail Boolean type
+scalar NEGATEDBIT
+
+input NEGATEDBIT_comparison_exp {
+  EQ: NEGATEDBIT
+  IN: [NEGATEDBIT!]
+  NEQ: NEGATEDBIT
+  NIN: [NEGATEDBIT!]
+}
+
+# An Float scalar that must be greater than or equal to zero
+scalar NonNegativeFloat
+
+type Note {
+  id: ID!
+  datestamp: Float
+  title: String
+  description: String
+  category: NoteCategory
+  contacts(input: Contact_bool_exp): [Contact]
+}
+
+type NoteCategory {
+  id: ID!
+  order: Int
+  datestamp: Float
+  name: String
+  notes(input: Note_bool_exp): [Note]
+  division: Division
+}
+
+input NoteCategoryFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [NoteCategory_orderby!]
+
+  #  filter the rows returned
+  where: NoteCategory_bool_exp
+}
+
+input NoteCategory_bool_exp {
+  AND: [NoteCategory_bool_exp]
+
+  #  NOT: NoteCategory_bool_exp
+  OR: [NoteCategory_bool_exp]
+  id: Int_comparison_exp
+  divisionid: Int_comparison_exp
+}
+
+#  ordering options when selecting data
+input NoteCategory_orderby {
+  id: orderby
+}
+
+input NoteFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [Note_orderby!]
+
+  #  filter the rows returned
+  where: Note_bool_exp
+}
+
+input Note_bool_exp {
+  AND: [Note_bool_exp]
+
+  #  NOT: Note_bool_exp
+  OR: [Note_bool_exp]
+  id: Int_comparison_exp
+  categoryid: Int_comparison_exp
+  contactid: Int_comparison_exp
+}
+
+#  ordering options when selecting data
+input Note_orderby {
+  id: orderby
+}
+
+type OAuthClient {
+  id: Int!
+  uid: String!
+  clientName: String
+  clientSecret: String
+  redirectUris: String
+  responseTypes: String
+  grantTypes: String
+  scope: String
+  deleted: Boolean
+  summary: String
+  description: String
+  developerName: String
+  url: String
+  privacyUrl: String
+  termsUrl: String
+  iconUrl: String
+  created: DATETIMEFORMAT
+  lastupdated: DATETIMEFORMAT
+  oauthusers: [OAuthUser]
+}
+
+input OAuthClientFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [OAuthClient_orderby!]
+
+  #  filter the rows returned
+  where: OAuthClient_bool_exp
+}
+
+input OAuthClient_bool_exp {
+  AND: [OAuthClient_bool_exp]
+
+  #  NOT: OAuthClient_bool_exp
+  OR: [OAuthClient_bool_exp]
+  deleted: Boolean_comparison_exp
+  id: Int_comparison_exp
+  uid: String_comparison_exp
+}
+
+#  ordering options when selecting data
+input OAuthClient_orderby {
+  id: orderby
+}
+
+type OAuthRefreshToken {
+  id: Int
+  uid: String!
+  grantid: String
+  data: JSON
+  clientid: String
+  instance: INSTANCEENUM
+  accountid: Int
+  userid: Int
+  expirestime: BigInteger
+  consumedtime: BigInteger
+  revokedtime: BigInteger
+  created: DATETIMEFORMAT
+  lastupdated: DATETIMEFORMAT
+  oauthclient: OAuthClient
+}
+
+input OAuthRefreshTokenFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [OAuthRefreshToken_orderby!]
+
+  #  filter the rows returned
+  where: OAuthRefreshToken_bool_exp
+}
+
+input OAuthRefreshToken_bool_exp {
+  AND: [OAuthRefreshToken_bool_exp]
+
+  #  NOT: OAuthRefreshToken_bool_exp
+  OR: [OAuthRefreshToken_bool_exp]
+  revokedtime: BigInteger_comparison_exp
+  expirestime: BigInteger_comparison_exp
+  consumedtime: BigInteger_comparison_exp
+  uid: String_comparison_exp
+  id: Int_comparison_exp
+  userid: Int_comparison_exp
+  accountid: Int_comparison_exp
+  clientid: String_comparison_exp
+  grantid: String_comparison_exp
+  instance: INSTANCEENUM_comparison_exp
+  OAuthClient: OAuthClient_bool_exp
+}
+
+#  ordering options when selecting data
+input OAuthRefreshToken_orderby {
+  id: orderby
+}
+
+type OAuthUser {
+  id: Int
+  uid: String!
+  clientid: Int
+  clientuid: String
+  useruuid: String
+  instance: INSTANCEENUM
+  accountid: Int
+  userid: BigInteger
+  scopes: String
+  claims: String
+  rejectedScopes: String
+  rejectedClaims: String
+  authtime: BigInteger
+
+  # authtime1: String
+  # authtime2: DateTime
+  revokedtime: BigInteger
+  created: DATETIMEFORMAT
+  lastupdated: DATETIMEFORMAT
+  oauthclient: [OAuthClient]
+}
+
+input OAuthUserFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [OAuthUser_orderby!]
+
+  #  filter the rows returned
+  where: OAuthUser_bool_exp
+}
+
+input OAuthUser_bool_exp {
+  AND: [OAuthUser_bool_exp]
+
+  #  NOT: OAuthUser_bool_exp
+  OR: [OAuthUser_bool_exp]
+  revokedtime: BigInteger_comparison_exp
+  authtime: BigInteger_comparison_exp
+  id: Int_comparison_exp
+  uid: String_comparison_exp
+  userid: Int_comparison_exp
+  accountid: Int_comparison_exp
+  clientid: Int_comparison_exp
+  clientuid: String_comparison_exp
+  instance: INSTANCEENUM_comparison_exp
+  OAuthClient: OAuthClient_bool_exp
+}
+
+#  ordering options when selecting data
+input OAuthUser_orderby {
+  id: orderby
+}
+
+# valid values are disabled, pending and enabled
+scalar OTPSTATUS
+
+# A field whose value is a valid One Time Token value
+scalar OTTVALUE
+
+#  expression to compare columns of type OTTVALUE. All fields are combined with logical 'AND'.
+input OTTVALUE_comparison_exp {
+  EQ: OTTVALUE
+
+  #  _ilike: OTTVALUE
+  IN: [OTTVALUE!]
+  IS_NULL: Boolean
+  LIKE: OTTVALUE
+  NEQ: OTTVALUE
+
+  #  _nilike: OTTVALUE
+  NIN: [OTTVALUE!]
+}
+
+# A custom scalar that ordernumber
+scalar OrderNumber
+
+# valid values are Active and Complete
+scalar PROJECTLINEITEMSTATUS
+
+input PROJECTLINEITEMSTATUS_comparison_exp {
+  EQ: PROJECTLINEITEMSTATUS
+  IN: [PROJECTLINEITEMSTATUS]
+  NEQ: PROJECTLINEITEMSTATUS
+  NIN: [PROJECTLINEITEMSTATUS!]
+}
+
+# valid values are veryhigh, high, medium, low and verylow
+scalar PROJECTPRIORITY
+
+input PROJECTPRIORITY_comparison_exp {
+  EQ: PROJECTPRIORITY
+  NEQ: PROJECTPRIORITY
+  IN: [PROJECTPRIORITY!]
+  NIN: [PROJECTPRIORITY!]
+}
+
+# A field that represents status for a project
+scalar PROJECTSTATUS
+
+input PROJECTSTATUS_comparison_exp {
+  EQ: PROJECTSTATUS
+  NEQ: PROJECTSTATUS
+  IN: [PROJECTSTATUS!]
+  NIN: [PROJECTSTATUS!]
+}
+
+# A field that represents type a project
+scalar PROJECTTYPE
+
+input PROJECTTYPE_comparison_exp {
+  EQ: PROJECTTYPE
+  NEQ: PROJECTTYPE
+  IN: [PROJECTTYPE!]
+  NIN: [PROJECTTYPE!]
+}
+
+type Priority {
+  id: ID!
+  datestamp: Float
+  name: String
+  value: String
+  color: String
+  tasks(input: Task_bool_exp = { deleted: { EQ: false } }): [Task]
+  projects(
+    input: Project_bool_exp = {
+      deleted: { EQ: false }
+      request: { EQ: false }
+      template: { EQ: false }
+    }
+  ): [Project]
+}
+
+input PriorityFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [Priority_orderby!]
+
+  #  filter the rows returned
+  where: Priority_bool_exp
+}
+
+input Priority_bool_exp {
+  AND: [Priority_bool_exp]
+
+  #  NOT: Priority_bool_exp
+  OR: [Priority_bool_exp]
+  id: Int_comparison_exp
+}
+
+#  ordering options when selecting data
+input Priority_orderby {
+  id: orderby
+}
+
+type Project {
+  accountedfor: BOOLEANYN
+  apifields(
+    input: ApifieldValue_bool_exp = {
+      deleted: { EQ: false }
+      type: { EQ: project }
+    }
+  ): [ApifieldValue]
+  boardcolumns(
+    input: BoardColumn_bool_exp = { deleted: { EQ: false } }
+  ): [BoardColumn]
+  bookmarks: [Bookmark]
+  category: ProjectCategory
+  categoryid: Int
+  clientaccess: Boolean
+  clientcontact(input: Contact_bool_exp): Contact
+  clientcontactid: Int
+  clientgroupid: Int
+  clientid: ArrayOfIntegers
+  clients(
+    input: Contact_bool_exp = { status: { IN: [active, archived] } }
+  ): [Contact]
+  clientteamid: Int
+  clientviewalltasks: Boolean
+  clientviewtime: Boolean
+  contactid: ArrayOfIntegers
+  company: Company
+  companyid: Int
+  completedate: DATEFORMAT
+  contacts(
+    input: Contact_bool_exp = { status: { IN: [active, archived] } }
+  ): [Contact]
+  contractorid: ArrayOfIntegers
+  contractors(
+    input: Contact_bool_exp = { status: { IN: [active, archived] } }
+  ): [Contact]
+  customfieldoptionid: ArrayOfIntegers
+  customfieldoptions(input: CustomFieldOption_bool_exp): [CustomFieldOption]
+  customformcontent: String
+  customformtitle: Text
+  customstatus: CustomStatus
+  customstatusid: Int
+  datestamp: Float
+  deleted: Boolean
+  dependent: Boolean
+  description: String
+  detailspagesettings: ProjectSetting
+  division: Division
+  divisionid: Int
+  duedate: DATEFORMAT
+  expenses(input: Expense_bool_exp = { active: { EQ: true } }): [Expense]
+  expensetotal(input: Expense_bool_exp = { active: { EQ: true } }): Aggregate
+  files(input: File_bool_exp = { deleted: { EQ: false } }): [File]
+  filteredtimespent(
+    input: Timerecord_bool_exp = {
+      deleted: { EQ: false }
+      running: { EQ: false }
+    }
+  ): Aggregate
+  financials(input: Task_bool_exp): ProjectFinancial
+  folders(input: Folder_bool_exp = { deleted: { EQ: false } }): [Folder]
+  group: Group
+  groupid: Int
+  icalcontactid: ArrayOfIntegers
+  id: ID!
+  integrationsetting: JSON
+  invoiced: BOOLEANYN
+  invoices(input: Invoice_bool_exp = { template: { EQ: false } }): [Invoice]
+  invoicetotal(input: Invoice_bool_exp = { template: { EQ: false } }): Aggregate
+  lastupdated: DATETIMEFORMAT
+  lineiteminternalcosttotal(
+    input: ProjectLineItem_bool_exp = { deleted: { EQ: false } }
+  ): Aggregate
+  lineitems(
+    input: ProjectLineItem_bool_exp = { deleted: { EQ: false } }
+  ): [ProjectLineItem]
+  manager: Contact
+  managerid: Int
+  manualquotetotal: Boolean
+  messages(input: Message_bool_exp): [Message]
+  notification: Boolean
+  number: String
+  overallocatedtime: Boolean
+  paid: BOOLEANYN
+  priority: PROJECTPRIORITY
+  privatenotes: String
+  projectclient: ProjectClient
+  projectnotes: [ProjectNote]
+  purchaseorder: String
+  quotelineitems(input: QuoteLineItem_bool_exp): [QuoteLineItem]
+  quotelineitemtotal(input: QuoteLineItem_bool_exp): Aggregate
+  quotes(input: Quote_bool_exp = { template: { EQ: false } }): [Quote]
+  quotetotal(input: Quote_bool_exp = { template: { EQ: false } }): Aggregate
+  request: Boolean
+  showcompletedtasks: Boolean
+  smartorderingenabled: Boolean
+  staff(
+    input: Contact_bool_exp = { status: { IN: [active, archived] } }
+  ): [Contact]
+  staffcost(
+    input: Timerecord_bool_exp = {
+      deleted: { EQ: false }
+      running: { EQ: false }
+    }
+  ): Aggregate
+
+  #  array of staff ids, Please use staff -> id for better performance in project level queries
+  staffid: ArrayOfIntegers
+  staffviewallmessages: Boolean
+  staffviewalltasks: Boolean
+  startdate: DATEFORMAT
+  status: PROJECTSTATUS
+  submittedto: Contact
+  tagid: ArrayOfIntegers
+  tags(input: ProjectTag_bool_exp = { deleted: { EQ: false } }): [ProjectTag]
+  tasks(input: Task_bool_exp = { deleted: { EQ: false } }): [Task]
+  tasktimeallocated(
+    input: Task_bool_exp = { deleted: { EQ: false } }
+  ): Aggregate
+  team: Team
+  teamid: Int
+  template: Boolean
+  templateused: Int
+  timeallocated: Int
+  timerecords(
+    input: Timerecord_bool_exp = {
+      deleted: { EQ: false }
+      running: { EQ: false }
+    }
+  ): [Timerecord]
+  timespent: Int
+  title: String
+  type: PROJECTTYPE
+  usemanualinvoicetotal: Boolean
+  usemanualquotetotal: Boolean
+}
+
+type ProjectCategory {
+  id: ID!
+  order: Int
+  datestamp: Float
+  name: String
+  color: String
+  projects(
+    input: Project_bool_exp = {
+      deleted: { EQ: false }
+      request: { EQ: false }
+      template: { EQ: false }
+    }
+  ): [Project]
+  deleted: Boolean
+  division: Division
+}
+
+input ProjectCategoryFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [ProjectCategory_orderby!]
+
+  #  filter the rows returned
+  where: ProjectCategory_bool_exp
+}
+
+input ProjectCategory_bool_exp {
+  AND: [ProjectCategory_bool_exp]
+
+  #  NOT: ProjectCategory_bool_exp
+  OR: [ProjectCategory_bool_exp]
+  deleted: Boolean_comparison_exp = { EQ: false }
+  divisionid: Int_comparison_exp
+  id: Int_comparison_exp
+  name: String_comparison_exp
+  Project: Project_bool_exp
+}
+
+#  ordering options when selecting data
+input ProjectCategory_orderby {
+  id: orderby
+  order: orderby
+  name: orderby
+}
+
+type ProjectClient {
+  id: ID!
+  code: String
+  name: String
+  type: PROJECTTYPE
+  company: Company
+  team: Team
+  group: Group
+}
+
+type ProjectCustomFieldOption {
+  id: Int!
+  datestamp: Float
+  name: String
+  customfield: CustomField
+  projects(
+    input: Project_bool_exp = {
+      deleted: { EQ: false }
+      request: { EQ: false }
+      template: { EQ: false }
+    }
+  ): [Project]
+}
+
+input ProjectCustomFieldOptionFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [ProjectCustomFieldOption_orderby!]
+
+  #  filter the rows returned
+  where: ProjectCustomFieldOption_bool_exp
+}
+
+input ProjectCustomFieldOption_bool_exp {
+  AND: [ProjectCustomFieldOption_bool_exp]
+
+  #  NOT: ProjectCustomFieldOption_bool_exp
+  OR: [ProjectCustomFieldOption_bool_exp]
+  id: Int_comparison_exp
+  customfieldid: Int_comparison_exp
+  projectid: Int_comparison_exp
+  deleted: Boolean_comparison_exp
+  name: String_comparison_exp
+}
+
+#  ordering options when selecting data
+input ProjectCustomFieldOption_orderby {
+  id: orderby
+}
+
+input ProjectFilter {
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [Project_orderby!]
+
+  #  filter the rows returned
+  where: Project_bool_exp
+}
+
+#  type ProjectClientExternal  {
+#      id: ID!
+#      code: String
+#      name: String
+#      type: PROJECTTYPE
+#      company: Company @auth(type : "view", permission: 8)
+#      team: Team
+#      group: Group
+#  }
+#  type ProjectClientInternal  {
+#      id: ID!
+#      code: String
+#      name: String
+#      type: PROJECTTYPE
+#      company: Company @auth(type : "view", permission: 8)
+#      team: Team
+#      group: Group
+#  }
+#  union ProjectClient1 = ProjectClientExternal | ProjectClientInternal
+type ProjectFinancial {
+  budget: DECIMAL!
+  budgetvariance: DECIMAL
+  filteredburn: DECIMAL
+  filteredtime: Int
+  timevariance: Int
+  totalburn: DECIMAL!
+}
+
+input ProjectIDInput {
+  id: Int!
+}
+
+type ProjectLineItem {
+  id: ID!
+  datestamp: Float
+  quantity: Int
+  chargerate: Float
+  internalcost: Float
+  quoteid: Int
+  projectid: Int
+  displayorder: Int
+  quote: Quote
+  project: Project
+  taxable: Boolean
+  deleted: Boolean
+  invoiced: Boolean
+  status: PROJECTLINEITEMSTATUS
+  type: LINEITEMTYPE
+  name: String
+  description: String
+}
+
+input ProjectLineItemFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [ProjectLineItem_orderby!]
+
+  #  filter the rows returned
+  where: ProjectLineItem_bool_exp
+}
+
+input ProjectLineItem_bool_exp {
+  AND: [ProjectLineItem_bool_exp]
+
+  #  NOT: ProjectLineItem_bool_exp
+  OR: [ProjectLineItem_bool_exp]
+  id: Int_comparison_exp
+  projectid: Int_comparison_exp
+  teamid: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  deleted: Boolean_comparison_exp = { EQ: false }
+  taxable: Boolean_comparison_exp
+  invoiced: Boolean_comparison_exp
+  status: PROJECTLINEITEMSTATUS_comparison_exp
+}
+
+#  ordering options when selecting data
+input ProjectLineItem_orderby {
+  id: orderby
+}
+
+type ProjectNote {
+  id: ID!
+  title: String
+  description: String
+  datestamp: Float
+  project: Project
+}
+
+type ProjectSetting {
+  id: ID!
+  middlecontainerorder: String
+  rightcontainerorder: String
+  descriptionenabled: Boolean
+  descriptionclosed: Boolean
+  privatenotesclosed: Boolean
+  privatenotesenabled: Boolean
+  tasksclosed: Boolean
+  tasksenabled: Boolean
+  messagesclosed: Boolean
+  messagesenabled: Boolean
+  filesclosed: Boolean
+  filesenabled: Boolean
+  invoicesclosed: Boolean
+  invoicesenabled: Boolean
+  recurringtasksclosed: Boolean
+  recurringtasksenabled: Boolean
+  customformsclosed: Boolean
+  customformsenabled: Boolean
+  timelineclosed: Boolean
+  timelineenabled: Boolean
+  timesummaryclosed: Boolean
+  timesummaryenabled: Boolean
+  customfieldsclosed: Boolean
+  customfieldsenabled: Boolean
+  bookmarksclosed: Boolean
+  bookmarksenabled: Boolean
+  sharednotesclosed: Boolean
+  sharednotesenabled: Boolean
+  quotesclosed: Boolean
+  quotesenabled: Boolean
+  expensesclosed: Boolean
+  expensesenabled: Boolean
+  messagessortorder: String
+  filessortorder: String
+}
+
+type ProjectTag {
+  id: ID!
+  datestamp: Float
+  displayorder: Int
+  divisionid: Int
+  deleted: Boolean
+  color: String
+  name: String
+  tasks: [Task]
+}
+
+input ProjectTagFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [ProjectTag_orderby!]
+
+  #  filter the rows returned
+  where: ProjectTag_bool_exp
+}
+
+input ProjectTag_bool_exp {
+  AND: [ProjectTag_bool_exp]
+
+  #  NOT: ProjectTag_bool_exp
+  OR: [ProjectTag_bool_exp]
+  id: Int_comparison_exp
+  contactid: Int_comparison_exp
+  companyid: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  deleted: Boolean_comparison_exp = { EQ: false }
+}
+
+#  ordering options when selecting data
+input ProjectTag_orderby {
+  id: orderby
+  displayorder: orderby
+}
+
+input Project_bool_exp {
+  #  NOT: Project_bool_exp
+  AND: [Project_bool_exp]
+  CustomFieldOption: CustomFieldOption_bool_exp
+  Expense: Expense_bool_exp
+  Message: Message_bool_exp
+  OR: [Project_bool_exp]
+  Task: Task_bool_exp
+  Company: Company_bool_exp
+  Timerecord: Timerecord_bool_exp
+  accountedfor: BooleanYN_comparison_exp
+  categoryid: Int_comparison_exp
+  clientaccess: Boolean_comparison_exp
+  clientcontactid: Int_comparison_exp
+  clientgroupid: Int_comparison_exp
+  clientid: Int_comparison_exp
+  clientteamid: Int_comparison_exp
+  clientviewtime: Boolean_comparison_exp
+  companyid: Int_comparison_exp
+  completedate: Date_comparison_exp
+  contactid: Int_comparison_exp
+  contractorid: Int_comparison_exp
+  customfieldoptionid: Int_comparison_exp
+  customstatusid: Int_comparison_exp
+  datestamp: String_comparison_exp
+  deleted: Boolean_comparison_exp = { EQ: false }
+  dependent: Boolean_comparison_exp
+  divisionid: Int_comparison_exp
+  duedate: Date_comparison_exp
+  File: File_bool_exp
+  groupid: Int_comparison_exp
+  icalcontactid: Int_comparison_exp
+  id: Int_comparison_exp
+  invoiced: BooleanYN_comparison_exp
+  lastupdated: Date_comparison_exp
+  managerid: Int_comparison_exp
+  number: String_comparison_exp
+  overallocatedtime: Boolean_comparison_exp
+  paid: BooleanYN_comparison_exp
+  priority: PROJECTPRIORITY_comparison_exp
+  purchaseorder: String_comparison_exp
+  request: Boolean_comparison_exp = { EQ: false }
+  searchterm: String_comparison_exp
+  staffid: Int_comparison_exp
+  startdate: Date_comparison_exp
+  status: PROJECTSTATUS_comparison_exp
+  tagid: Int_comparison_exp
+  teamid: Int_comparison_exp
+  template: Boolean_comparison_exp = { EQ: false }
+  title: String_comparison_exp
+  type: PROJECTTYPE_comparison_exp
+}
+
+input Project_orderby {
+  id: orderby
+  number: orderby
+  title: orderby
+  lastupdated: orderby
+}
+
+enum QUOTELINEITEMTYPE {
+  heading
+  lineitem
+  staffrate
+  taskrate
+}
+
+input QUOTELINEITEMTYPE_comparison_exp {
+  EQ: QUOTELINEITEMTYPE
+  IN: [QUOTELINEITEMTYPE]
+  NEQ: QUOTELINEITEMTYPE
+  NIN: [QUOTELINEITEMTYPE!]
+}
+
+enum QUOTESTATUS {
+  current
+  deleted
+  template
+  approved
+  unapproved
+}
+
+input QUOTESTATUS_comparison_exp {
+  EQ: QUOTESTATUS
+  NEQ: QUOTESTATUS
+  IN: [QUOTESTATUS!]
+  NIN: [QUOTESTATUS!]
+}
+
+#  the schema allows the following two queries:
+type Query {
+  account: Account
+  userpermissions(input: UserPermissionFilter): [UserPermission]
+
+  #  @auth(type: "view", permission: 18)
+  #  @contactType(staff: true, contractor: false, client: false)
+  auditlogs(input: AuditLogFilter): [AuditLog]
+  apifields(input: ApifieldFilter): [Apifield]
+
+  #  boardcolumns(
+  #    input: BoardColumnFilter = { where: { deleted: { EQ: false } } }
+  #  ): [BoardColumn] @auth(type: "view", permission: 3)
+  boardcolumns(input: BoardColumnFilter): [BoardColumn]
+  bookmarks: [Bookmark]
+  companies(input: CompanyFilter): [Company]
+  contacttags(
+    input: ContactTagFilter = { where: { deleted: { EQ: false } } }
+  ): [ContactTag]
+  contacts(
+    input: ContactFilter = { where: { status: { IN: [active, archived] } } }
+  ): [Contact]
+  contactnotes: [ContactNote]
+  customstatuses(
+    input: CustomStatusFilter = { where: { deleted: { EQ: false } } }
+  ): [CustomStatus]
+  customfields(input: CustomFieldFilter): [CustomField]
+  customfieldoptions(input: CustomFieldOptionFilter): [CustomFieldOption]
+  division(id: [Int]): [Division]
+  expenses(
+    input: ExpenseFilter = { where: { active: { EQ: true } } }
+  ): [Expense]
+  files(input: FileFilter = { where: { deleted: { EQ: false } } }): [File]
+  folders(input: FolderFilter = { where: { deleted: { EQ: false } } }): [Folder]
+  groups(input: GroupFilter = { where: { deleted: { EQ: false } } }): [Group]
+  hourlyrateservices(
+    input: HourlyRateServiceFilter = { where: { deleted: { EQ: false } } }
+  ): [HourlyRateService]
+
+  # permissions could either be quotes or invoices
+  mswordlayouts(
+    input: MSWordLayoutFilter = { where: { type: { EQ: invoice } } }
+  ): [MSWordLayout]
+  invoices(
+    input: InvoiceFilter = { where: { template: { EQ: false } } }
+  ): [Invoice]
+  me: [Contact]
+  notecategories(input: NoteCategoryFilter): [NoteCategory]
+  notes(input: NoteFilter): [Note]
+  priorities(input: PriorityFilter): [Priority]
+  projects(
+    input: ProjectFilter = {
+      where: {
+        deleted: { EQ: false }
+        divisionid: { EQ: 1 }
+        request: { EQ: false }
+        template: { EQ: false }
+      }
+    }
+  ): [Project]
+  projectlineitems(
+    input: ProjectLineItemFilter = { where: { deleted: { EQ: false } } }
+  ): [ProjectLineItem]
+
+  #  @environment(type: development)
+  projectcategories(
+    input: ProjectCategoryFilter = { where: { deleted: { EQ: false } } }
+  ): [ProjectCategory]
+  projectcustomfieldoptions(
+    input: ProjectCustomFieldOptionFilter
+  ): [ProjectCustomFieldOption]
+  projectnotes: [ProjectNote]
+  projecttags(
+    input: ProjectTagFilter = { where: { deleted: { EQ: false } } }
+  ): [ProjectTag]
+  quotes(input: QuoteFilter = { where: { template: { EQ: false } } }): [Quote]
+  quotelineitems(input: QuoteLineItemFilter): [QuoteLineItem]
+  reports(input: ReportFilter = { where: { status: { EQ: active } } }): [Report]
+  reporttemplates(
+    input: ReportTemplateFilter = { where: { deleted: { EQ: false } } }
+  ): [ReportTemplate]
+  reporttemplategroups(
+    input: ReportTemplateGroupFilter = { where: { deleted: { EQ: false } } }
+  ): [ReportTemplateGroup]
+  schedules(input: ScheduleFilter): [Schedule]
+  getcrontab(input: ValidScheduleInput): ValidSchedule
+  scheduleevents(input: ScheduleEventFilter): [ScheduleEvent]
+  staffworkload(input: WorkloadFilter): [Workload]
+  staffperformance(input: WorkloadFilter): [Workload]
+  taskcategories(input: TaskCategoryFilter): [TaskCategory]
+
+  #  defaulttasklists(
+  #    input: DefaultTaskListFilter = { where: { deleted: { EQ: false } } }
+  #  ): [DefaultTaskList]
+  tasktags(
+    input: TaskTagFilter = { where: { deleted: { EQ: false } } }
+  ): [TaskTag]
+  tasks(
+    input: TaskFilter = {
+      where: { deleted: { EQ: false }, divisionid: { EQ: 1 } }
+    }
+  ): [Task]
+  teams(input: TeamFilter): [Team]
+  timesheetweeks(input: TimesheetWeekFilter): [TimesheetWeek]
+  timerecords(
+    input: TimerecordFilter = {
+      where: { deleted: { EQ: false }, running: { EQ: false } }
+    }
+  ): [Timerecord]
+  viewconfigs(input: ViewConfigFilter): [ViewConfig]
+  userviewconfigs(input: UserViewConfigFilter): [UserViewConfig]
+
+  # TODO: remove this
+  userviewmenus(input: UserViewMenuFilter): [UserViewMenu]
+  oauthusers(input: OAuthUserFilter): [OAuthUser]
+  oauthrefreshtokens(input: OAuthRefreshTokenFilter): [OAuthRefreshToken]
+}
+
+type Quote {
+  id: ID!
+  datestamp: Float
+  grandtotal: Float
+  subtotal: Float
+  taxtotal: Float
+  emailedtoclient: Boolean
+  showcostbreakdown: Boolean
+  template: Boolean
+  newlayout: Boolean
+  clientaccess: Boolean
+  taxable: NEGATEDBIT
+  title: String
+  emaileddate: DATEFORMAT
+  approveddate: DATEFORMAT
+  quotedate: DATEFORMAT
+  validdate: DATEFORMAT
+  number: String
+  quotedby: String
+  emailsentto: String
+  status: QUOTESTATUS
+  topmargin: Int
+  pagewidth: Int
+  quoteperiod: Int
+  discount: Float
+  taxrate: Float
+  description: String
+  terms: String
+  contactfooter: String
+  footerdetails: String
+  customfieldname: String
+  customfieldvalue: String
+  pagetitle: String
+  logo: String
+  client: String
+  clientcompany: String
+  discountdescription: String
+  discounttype: String
+  address1: String
+  address2: String
+  address3: String
+  city: String
+  state: String
+  zipcode: String
+  country: String
+  phone: String
+  lastupdated: DATETIMEFORMAT
+  fax: String
+  company: Company
+  project: Project
+  division: Division
+  mswordlayout(input: MSWordLayoutFilter = { where: {} }): MSWordLayout
+  quotelineitems(input: QuoteLineItem_bool_exp): [QuoteLineItem]
+  quotelineitemtotal(input: QuoteLineItem_bool_exp): Aggregate
+  quotediscounttotal(input: QuoteLineItem_bool_exp): Aggregate
+  apifields(
+    input: ApifieldValue_bool_exp = {
+      deleted: { EQ: false }
+      type: { EQ: quote }
+    }
+  ): [ApifieldValue]
+}
+
+input QuoteFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [Quote_orderby!]
+
+  #  filter the rows returned
+  where: Quote_bool_exp
+}
+
+type QuoteLineItem {
+  id: ID!
+  datestamp: Float
+  linetotal: Float
+  quantity: Float
+  rate: Float
+  displayorder: Int
+  quote: Quote
+  taxable: Boolean
+  type: QUOTELINEITEMTYPE
+  name: String
+  description: String
+}
+
+input QuoteLineItemFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [QuoteLineItem_orderby!]
+
+  #  filter the rows returned
+  where: QuoteLineItem_bool_exp
+}
+
+input QuoteLineItem_bool_exp {
+  AND: [QuoteLineItem_bool_exp]
+
+  #  NOT: QuoteLineItem_bool_exp
+  OR: [QuoteLineItem_bool_exp]
+  id: Int_comparison_exp
+  quoteid: Int_comparison_exp
+  projectid: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  taxable: Boolean_comparison_exp
+  type: QUOTELINEITEMTYPE_comparison_exp
+  status: QUOTESTATUS_comparison_exp
+}
+
+#  ordering options when selecting data
+input QuoteLineItem_orderby {
+  id: orderby
+}
+
+input Quote_bool_exp {
+  AND: [Quote_bool_exp]
+
+  #  NOT: Quote_bool_exp
+  OR: [Quote_bool_exp]
+  template: Boolean_comparison_exp = { EQ: false }
+  id: Int_comparison_exp
+  projectid: Int_comparison_exp
+  companyid: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  taxable: NEGATEDBIT_comparison_exp
+  clientaccess: Boolean_comparison_exp
+  quotedate: Date_comparison_exp
+  validdate: Date_comparison_exp
+  includenovaliddate: Boolean_comparison_exp
+  approveddate: Date_comparison_exp
+  lastupdated: Date_comparison_exp
+  includenoapproveddate: Boolean_comparison_exp
+  emaileddate: Date_comparison_exp
+  grandtotal: Float_comparison_exp
+  discount: Float_comparison_exp
+  discounttype: String_comparison_exp
+  quotedby: String_comparison_exp
+  title: String_comparison_exp
+  number: String_comparison_exp
+  includenoemaileddate: Boolean_comparison_exp
+  status: QUOTESTATUS_comparison_exp
+  Project: Project_bool_exp
+}
+
+#  ordering options when selecting data
+input Quote_orderby {
+  id: orderby
+}
+
+enum RELATIVEDATE {
+  today
+  yesterday
+  this_week
+  this_week_to_date
+  next_week
+  last_week
+  this_month
+  this_quarter
+  this_year
+  next_month
+  next_quarter
+  next_year
+  this_month_to_date
+  this_quarter_to_date
+  this_year_to_date
+  last_month
+  last_quarter
+  last_year
+  last_7_days
+  last_14_days
+  last_30_days
+  last_60_days
+  last_90_days
+  last_180_days
+  last_365_days
+  next_7_days
+  next_14_days
+  next_30_days
+  next_60_days
+  next_90_days
+  next_180_days
+  next_365_days
+}
+
+enum REPORTDISPLAYTYPE {
+  overview
+  detailed
+  group
+  display
+  workload
+}
+
+input REPORTDISPLAYTYPE_comparison_exp {
+  EQ: REPORTDISPLAYTYPE
+  NEQ: REPORTDISPLAYTYPE
+  IN: [REPORTDISPLAYTYPE!]
+  NIN: [REPORTDISPLAYTYPE!]
+}
+
+enum REPORTTYPE {
+  project
+  task
+  timerecord
+  expense
+  invoice
+  quote
+  staff
+  financial
+  message
+}
+
+input REPORTTYPE_comparison_exp {
+  EQ: REPORTTYPE
+  NEQ: REPORTTYPE
+  IN: [REPORTTYPE!]
+  NIN: [REPORTTYPE!]
+}
+
+enum RESETTOKENEVENT {
+  ForgottenPassword
+  SendLoginDetails
+  SendOTPResetToken
+}
+
+type Report {
+  id: ID!
+  reporttemplateid: String
+  version: Int
+  ispublic: Boolean
+  name: String
+  description: String
+  settings: ReportSetting
+  created: String
+  lastupdated: String
+  status: CONTACTSTATUS
+  owner: Contact
+  division: Division
+  template: ReportTemplate
+  schedule: Schedule
+  schedulecontacts(
+    input: Contact_bool_exp = { status: { IN: [active, archived] } }
+  ): [Contact]
+  sharedcontacts(
+    input: Contact_bool_exp = { status: { IN: [active, archived] } }
+  ): [Contact]
+  favouritecontacts(
+    input: Contact_bool_exp = { status: { IN: [active, archived] } }
+  ): [Contact]
+  uniquetoken: String
+}
+
+input ReportFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [Report_orderby!]
+
+  #  filter the rows returned
+  where: Report_bool_exp
+}
+
+input ReportFilterInput {
+  gqlroot: String!
+  filter: String!
+  name: [String]
+  exclude: Boolean
+  value: JSON
+}
+
+type ReportFilterType {
+  gqlroot: String
+  filter: String
+  name: [String]
+  value: JSON
+  exclude: Boolean
+  selected: [FilterSelectedOptions]
+}
+
+type ReportSetting {
+  sortOptions: JSON
+  formatOptions: JSON
+  fields: JSON
+  filters: [ReportFilterType]
+  pdf: JSON
+  scheduleconfig: JSON
+}
+
+input ReportSettingInput {
+  sortOptions: JSON!
+  formatOptions: JSON
+  fields: JSON!
+  filters: [ReportFilterInput!]
+  pdf: JSON
+  scheduleconfig: JSON
+}
+
+type ReportTemplate {
+  id: ID!
+  name: String
+  title: String
+  displaytype: REPORTDISPLAYTYPE
+  settings: ReportSetting
+  created: String
+  version: Int
+  deleted: Boolean
+  advanced: Boolean
+  lastupdated: String
+  group: ReportTemplateGroup
+  twin: ReportTemplate
+}
+
+input ReportTemplateFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [ReportTemplate_orderby!]
+
+  #  filter the rows returned
+  where: ReportTemplate_bool_exp
+}
+
+type ReportTemplateGroup {
+  id: ID!
+  name: String
+  description: String
+  type: REPORTTYPE
+  created: String
+  version: Int
+  deleted: Boolean
+  lastupdated: String
+  reporttemplates(
+    input: ReportTemplate_bool_exp = { deleted: { EQ: false } }
+  ): [ReportTemplate]
+}
+
+input ReportTemplateGroupFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [ReportTemplateGroup_orderby!]
+
+  #  filter the rows returned
+  where: ReportTemplateGroup_bool_exp
+}
+
+input ReportTemplateGroup_bool_exp {
+  AND: [ReportTemplateGroup_bool_exp]
+
+  #  NOT: ReportTemplateGroup_bool_exp
+  OR: [ReportTemplateGroup_bool_exp]
+  id: Int_comparison_exp
+  displaytype: REPORTTYPE_comparison_exp
+  deleted: Boolean_comparison_exp = { EQ: false }
+  advanced: Boolean_comparison_exp
+  version: Int_comparison_exp
+  twinid: Int_comparison_exp
+  reporttemplategroupid: Int_comparison_exp
+}
+
+#  ordering options when selecting data
+input ReportTemplateGroup_orderby {
+  id: orderby
+}
+
+input ReportTemplate_bool_exp {
+  AND: [ReportTemplate_bool_exp]
+
+  #  NOT: ReportTemplate_bool_exp
+  OR: [ReportTemplate_bool_exp]
+  id: Int_comparison_exp
+  reporttemplategroupid: Int_comparison_exp
+  twinid: Int_comparison_exp
+  displaytype: REPORTDISPLAYTYPE_comparison_exp
+  deleted: Boolean_comparison_exp = { EQ: false }
+  advanced: Boolean_comparison_exp
+  version: Int_comparison_exp
+}
+
+#  ordering options when selecting data
+input ReportTemplate_orderby {
+  id: orderby
+}
+
+input Report_bool_exp {
+  AND: [Report_bool_exp]
+
+  #  NOT: Report_bool_exp
+  OR: [Report_bool_exp]
+  id: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  reporttemplateid: Int_comparison_exp
+  status: CONTACTSTATUS_comparison_exp = { EQ: active }
+  ispublic: Boolean_comparison_exp
+  sharedcontactid: Int_comparison_exp
+  favouritecontactid: Int_comparison_exp
+  uniquetoken: String_comparison_exp
+}
+
+#  ordering options when selecting data
+input Report_orderby {
+  id: orderby
+}
+
+type ResetUser {
+  user: JSON
+}
+
+input RevokeOAuthRefreshTokenInput {
+  grantid: String!
+}
+
+input RevokeOAuthUserInput {
+  uid: String!
+}
+
+input RevokeOAuthUserInputSystem {
+  uid: String!
+  instance: INSTANCEENUM!
+  accountid: Int!
+  userid: Int!
+}
+
+type Role {
+  id: ID!
+  datestamp: Float
+  deleted: Boolean
+  name: String
+  displayOrder: Int
+  contacts(
+    input: Contact_bool_exp = { status: { IN: [active, archived] } }
+  ): [Contact]
+}
+
+input RoleFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [Role_orderby!]
+
+  #  filter the rows returned
+  where: Role_bool_exp
+}
+
+input Role_bool_exp {
+  AND: [Role_bool_exp]
+
+  #  NOT: Role_bool_exp
+  OR: [Role_bool_exp]
+  id: Int_comparison_exp
+  deleted: Boolean_comparison_exp = { EQ: false }
+}
+
+#  ordering options when selecting data
+input Role_orderby {
+  id: orderby
+}
+
+#  this schema allows the following two mutations:
+type RootMutation {
+  logIn(input: CreateLoginInput): Contact
+  createBoardColumn(input: CreateBoardColumnInput): BoardColumn
+  createCompany(input: CreateCompanyInput): Company
+  createGroup(input: CreateGroupInput): Group
+  createHourlyRateService(
+    input: CreateHourlyRateServiceInput
+  ): HourlyRateService
+  createProject(input: CreateProjectInput): [Project]
+  createInternalProject(input: CreateInternalProjectInput): [Project]
+  createProjectLineItems(input: [CreateProjectLineItemInput]): [ProjectLineItem]
+  createProjectTag(input: CreateProjectTagInput): ProjectTag
+  createReport(input: CreateReportInput): Report
+  createSchedule(input: CreateSchedule): Schedule
+  createTask(input: CreateTaskInput): Task
+  createTimerecord(input: CreateTimerecordInput): Timerecord
+  createViewConfig(input: CreateViewConfigInput): ViewConfig
+
+  # updateProjectCustomField(input: UpdateProjectCustomFieldInput): Project
+  # @auth(type: "edit", permission: 4)
+  deleteProject(input: ProjectIDInput): Project
+  completeProject(input: ProjectIDInput): Project
+  reactivateProject(input: ProjectIDInput): Project
+  saveUserViewConfig(input: SaveUserViewConfigInput): UserViewConfig
+  setUserViewConfigOrder(input: SetUserViewConfigOrderInput): [UserViewConfig]
+
+  #  createContact(input: CreateContactInput): Contact
+  #    @auth(type: "add", permission: 8)
+  startTimerecord(input: StartTimerecordInput): Timerecord
+  stopTimerecord(input: StartTimerecordInput): Timerecord
+  deleteGroup(input: DeleteGroupInput): Group
+  updateBoardColumn(input: UpdateBoardColumnInput): BoardColumn
+  updateContact(input: UpdateContactInput): Contact
+  updateCompany(input: UpdateCompanyInput): Company
+  updateDivision(input: UpdateDivisionInput): Division
+  updateGroup(input: UpdateGroupInput): Group
+  updateHourlyRateService(
+    input: UpdateHourlyRateServiceInput
+  ): HourlyRateService
+  updateProject(input: UpdateProjectInput): Project
+
+  # updateProjectCustomField(input: UpdateProjectCustomFieldInput): CustomFieldOption
+  #   @auth(type: "edit", permission: 4)
+  updateProjectLineItems(input: [UpdateProjectLineItemInput]): [ProjectLineItem]
+  updateProjectLineItem(input: UpdateProjectLineItemInput): ProjectLineItem
+  updateProjectTag(input: UpdateProjectTagInput): ProjectTag
+  updateReport(input: UpdateReportInput): Report
+  updateSchedule(input: UpdateSchedule): Schedule
+  updateTimerecord(input: UpdateTimerecordInput): Timerecord
+
+  # updateTimerecordNotes(input: UpdateTimerecordNotesInput): Timerecord
+  #   @auth(type: "add", permission: 7)
+  updateTask(input: UpdateTaskInput): Task
+  updateViewConfig(input: UpdateViewConfigInput): ViewConfig
+
+  # # non/create/update mutations
+  revokeOAuthUser(input: RevokeOAuthUserInput): OAuthUser
+  setOTPSecret(input: ContactOTPSecret): Contact
+  setStaffPayRates(input: [StaffHourlyPayInput]): [Contact]
+
+  # setTimeRecordNote(input: SetTimerecordNoteInput): [Timerecord]
+  #   @auth(type: "add", permission: 7)
+  #   @contactType(staff: true, contractor: false, client: false)
+  toggleOTPStatus: Contact
+  toggleFavouriteReport(input: FavouriteReportInput): Report
+}
+
+enum SCHEDULEEVENTSTATUS {
+  active
+  complete
+  error
+  deleted
+}
+
+input SCHEDULEEVENTSTATUS_comparison_exp {
+  EQ: SCHEDULEEVENTSTATUS
+  IN: [SCHEDULEEVENTSTATUS]
+  NEQ: SCHEDULEEVENTSTATUS
+  NIN: [SCHEDULEEVENTSTATUS!]
+}
+
+enum SCHEDULESTATUS {
+  active
+  deleted
+  paused
+  error
+}
+
+input SCHEDULESTATUS_comparison_exp {
+  EQ: SCHEDULESTATUS
+  IN: [SCHEDULESTATUS]
+  NEQ: SCHEDULESTATUS
+  NIN: [SCHEDULESTATUS!]
+}
+
+enum SCHEDULETYPE {
+  weekly
+  dayofmonth
+  firstweekdayofmonth
+  lastdayofmonth
+}
+
+input SCHEDULETYPE_comparison_exp {
+  EQ: SCHEDULETYPE
+  IN: [SCHEDULETYPE]
+  NEQ: SCHEDULETYPE
+  NIN: [SCHEDULETYPE!]
+}
+
+# Status
+enum STATUS {
+  # Active
+  active
+
+  # Complete
+  complete
+}
+
+input SaveOAuthRefreshTokenInput {
+  uid: String!
+  grantid: String!
+  data: JSON!
+  clientid: String!
+  instance: INSTANCEENUM!
+  accountid: Int!
+  userid: Int!
+  expirestime: BigInteger!
+  consumedtime: BigInteger
+}
+
+input SaveOAuthUserInput {
+  uid: String!
+  clientid: Int!
+  instance: INSTANCEENUM!
+  accountid: Int!
+  userid: Int!
+  scopes: String!
+  claims: String!
+  rejectedScopes: String
+  rejectedClaims: String
+  authtime: BigInteger!
+}
+
+input SaveUserViewConfigInput {
+  id: Int!
+  viewconfigid: Int!
+  name: String
+  fields: ArrayOfStrings
+  filters: JSONString
+  sortOrder: String
+  viewGroup: String
+  displayorder: Int
+  deleted: Boolean
+}
+
+type Schedule {
+  id: Int!
+  type: SCHEDULETYPE
+  endpoint: String
+  postvars: String
+  useruuid: String
+  instance: INSTANCEENUM
+  accountid: Int
+  objectid: Int
+  userid: Int
+  crontab: String
+  crondesc: String
+  minute: String
+  hour: String
+  daysofweek: String
+  daysofmonth: String
+  status: SCHEDULESTATUS
+  startdate: DATETIMEFORMAT
+  enddate: DATETIMEFORMAT
+  account: SearchAccount
+  events(input: ScheduleFilter): [ScheduleEvent]
+  report: Report
+}
+
+type ScheduleEvent {
+  id: ID!
+  scheduleid: Int
+  uuid: String
+  scheduledate: DATETIMEFORMAT
+  startdate: DATETIMEFORMAT
+  completedate: DATETIMEFORMAT
+  status: SCHEDULEEVENTSTATUS
+  errorcount: Int
+  details: String
+  schedule: Schedule
+}
+
+input ScheduleEventFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [ScheduleEvent_orderby!]
+
+  #  filter the rows returned
+  where: ScheduleEvent_bool_exp
+}
+
+input ScheduleEvent_bool_exp {
+  AND: [ScheduleEvent_bool_exp]
+
+  #  NOT: ScheduleEvent_bool_exp
+  OR: [ScheduleEvent_bool_exp]
+  id: Int_comparison_exp
+  scheduleid: Int_comparison_exp
+  errorcount: Int_comparison_exp
+  scheduledate: Date_comparison_exp
+  startdate: Date_comparison_exp
+  completedate: Date_comparison_exp
+  status: SCHEDULEEVENTSTATUS_comparison_exp
+}
+
+#  ordering options when selecting data
+input ScheduleEvent_orderby {
+  id: orderby
+  scheduledate: orderby
+  completedate: orderby
+}
+
+input ScheduleFilter {
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [Schedule_orderby!]
+
+  #  filter the rows returned
+  where: Schedule_bool_exp
+}
+
+input Schedule_bool_exp {
+  AND: [Schedule_bool_exp]
+
+  #  NOT: Schedule_bool_exp
+  OR: [Schedule_bool_exp]
+  accountid: Int_comparison_exp
+  id: Int_comparison_exp
+  type: SCHEDULETYPE_comparison_exp
+  status: SCHEDULESTATUS_comparison_exp
+  userid: Int_comparison_exp
+  instance: INSTANCEENUM_comparison_exp
+}
+
+#  ordering options when selecting data
+input Schedule_orderby {
+  id: orderby
+}
+
+type SearchAccount {
+  accountid: Int
+  name: String
+  type: String
+  url: String
+  accountstatus: String
+}
+
+input SendUserOneTimeTokenInput {
+  email: String!
+  account: AccountCreateLoginInput!
+}
+
+input SendUserResetTokenInput {
+  username: String!
+  sendevent: RESETTOKENEVENT = ForgottenPassword
+  account: AccountCreateLoginInput!
+}
+
+input SetUserViewConfigOrderInput {
+  id: [Int]!
+  section: VIEWCONFIGSECTION!
+}
+
+input SharedContactInput {
+  id: Int!
+}
+
+# simple HTML text: Block and Formatting tags
+scalar SimpleHTML
+
+type StaffHourlyPay {
+  rate: DECIMAL
+}
+
+input StaffHourlyPayInput {
+  id: Int!
+  payrate: Float
+}
+
+input StartTimerecordInput {
+  taskid: Int!
+  notes: Text = ""
+}
+
+#  expression to compare columns of type String. All fields are combined with logical 'AND'.
+input String_comparison_exp {
+  EQ: String
+  GT: String
+  GTE: String
+
+  #  _ilike: String
+  IN: [String!]
+  IS_NULL: Boolean
+  LIKE: String
+  NLIKE: String
+  LT: String
+  LTE: String
+  NEQ: String
+
+  #  _nilike: String
+  NIN: [String!]
+}
+
+# A field that represents status for a project
+scalar TASKSTATUS
+
+input TASKSTATUS_comparison_exp {
+  EQ: TASKSTATUS
+  NEQ: TASKSTATUS
+  IN: [TASKSTATUS!]
+  NIN: [TASKSTATUS!]
+}
+
+# A field that represents type a project
+scalar TASKTYPE
+
+input TASKTYPE_comparison_exp {
+  EQ: TASKTYPE
+  IN: [TASKTYPE!]
+  NEQ: TASKTYPE
+  NIN: [TASKTYPE!]
+}
+
+enum TIMESHEETWEEKSTATUS {
+  locked
+  approved
+  submitted
+}
+
+input TIMESHEETWEEKSTATUS_comparison_exp {
+  EQ: TIMESHEETWEEKSTATUS
+  IN: [TIMESHEETWEEKSTATUS]
+  NEQ: TIMESHEETWEEKSTATUS
+  NIN: [TIMESHEETWEEKSTATUS!]
+}
+
+type Task {
+  activitylog: [AuditLog]
+  apifields(
+    input: ApifieldValue_bool_exp = {
+      deleted: { EQ: false }
+      type: { EQ: task }
+    }
+  ): [ApifieldValue]
+  billable: Boolean
+  boardcolumn: BoardColumn
+  boardcolumnid: Int
+  budget: Float
+  budgetvariance: Float
+  category: TaskCategory
+  categoryid: Int
+  completedate: DATEFORMAT
+  contactid: ArrayOfIntegers
+  contacts(
+    input: Contact_bool_exp = { status: { IN: [active, archived] } }
+  ): [Contact]
+  currenttask: Boolean
+  datestamp: Float
+  deleted: Boolean
+  dependenttasks(input: Task_bool_exp = { deleted: { EQ: false } }): [Task]
+  description: String
+  displaytype: DISPLAYTYPE
+  divisionid: Int
+  duedate: DATEFORMAT
+  files(input: File_bool_exp = { deleted: { EQ: false } }): [File]
+  filteredburn(
+    input: Timerecord_bool_exp = {
+      deleted: { EQ: false }
+      running: { EQ: false }
+    }
+  ): Aggregate
+  filteredtimespent(
+    input: Timerecord_bool_exp = {
+      deleted: { EQ: false }
+      running: { EQ: false }
+    }
+  ): Aggregate
+  id: ID!
+  lastupdated: DATETIMEFORMAT
+  messages(input: Message_bool_exp): [Message]
+  name: String
+  nameraw: String
+  order1: String
+  order2: String
+  order3: String
+  ordernumber: OrderNumber
+  overallocatedtime: Boolean
+  prerequisiteid: ArrayOfIntegers
+  prerequisites(input: Task_bool_exp = { deleted: { EQ: false } }): [Task]
+  priority: PROJECTPRIORITY
+  projectid: Int
+  project: Project
+  servicecost: Float
+  servicedescription: String
+  servicename: String
+  staffcost(
+    input: Timerecord_bool_exp = {
+      deleted: { EQ: false }
+      running: { EQ: false }
+    }
+  ): Aggregate
+  startdate: DATEFORMAT
+  status: TASKSTATUS
+  tagid: ArrayOfIntegers
+  tags(input: Task_Tag_bool_exp = { deleted: { EQ: false } }): [TaskTag]
+  taxable: Boolean
+  timeallocated: Int
+  timerecords(
+    input: Timerecord_bool_exp = {
+      deleted: { EQ: false }
+      running: { EQ: false }
+    }
+  ): [Timerecord]
+  timespent: Int
+  timevariance: Int
+  totalburn: Float
+  type: TASKTYPE
+}
+
+type TaskCategory {
+  id: ID!
+  order: Int
+  datestamp: Float
+  name: String
+  deleted: Boolean
+  division: Division
+  tasks(input: Task_bool_exp = { deleted: { EQ: false } }): [Task]
+}
+
+input TaskCategoryFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [TaskCategory_orderby!]
+
+  #  filter the rows returned
+  where: TaskCategory_bool_exp
+}
+
+input TaskCategory_bool_exp {
+  AND: [TaskCategory_bool_exp]
+
+  #  NOT: TaskCategory_bool_exp
+  OR: [TaskCategory_bool_exp]
+  id: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  deleted: Boolean_comparison_exp
+}
+
+#  ordering options when selecting data
+input TaskCategory_orderby {
+  id: orderby
+}
+
+input TaskFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [Task_orderby!]
+
+  #  filter the rows returned
+  where: Task_bool_exp
+}
+
+type TaskTag {
+  id: ID!
+  datestamp: Float
+  displayorder: Int
+  divisionid: Int
+  deleted: Boolean
+  color: String
+  name: String
+  tasks: [Task]
+}
+
+input TaskTagFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [ProjectTag_orderby!]
+
+  #  filter the rows returned
+  where: Task_Tag_bool_exp
+}
+
+input Task_Tag_bool_exp {
+  AND: [Task_Tag_bool_exp]
+
+  #  NOT: Task_Tag_bool_exp
+  OR: [Task_Tag_bool_exp]
+  id: Int_comparison_exp
+  contactid: Int_comparison_exp
+  companyid: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  deleted: Boolean_comparison_exp = { EQ: false }
+}
+
+#  ordering options when selecting data
+input Task_Tag_orderby {
+  id: orderby
+  displayorder: orderby
+}
+
+input Task_bool_exp {
+  #  NOT: Task_bool_exp
+  AND: [Task_bool_exp]
+  Message: Message_bool_exp
+  OR: [Task_bool_exp]
+  File: File_bool_exp
+  Project: Project_bool_exp
+  Timerecord: Timerecord_bool_exp
+  billable: Boolean_comparison_exp
+  categoryid: Int_comparison_exp
+  clientid: Int_comparison_exp
+  completedate: Date_comparison_exp
+  contactid: Int_comparison_exp
+  contractorid: Int_comparison_exp
+  deleted: Boolean_comparison_exp = { EQ: false }
+  displaytype: DISPLAYTYPE_comparison_exp
+  divisionid: Int_comparison_exp
+  duedate: Date_comparison_exp
+  id: Int_comparison_exp
+  includenocompletedate: Boolean_comparison_exp
+  includenoduedate: Boolean_comparison_exp
+  includenostartdate: Boolean_comparison_exp
+  lastupdated: Date_comparison_exp
+  name: String_comparison_exp
+  overallocatedtime: Boolean_comparison_exp
+  prerequisiteid: Int_comparison_exp
+  priority: PROJECTPRIORITY_comparison_exp
+  projectid: Int_comparison_exp
+  staffid: Int_comparison_exp
+  startdate: Date_comparison_exp
+  status: TASKSTATUS_comparison_exp
+  tagid: Int_comparison_exp
+  taxable: Boolean_comparison_exp
+  timeallocated: Int_comparison_exp
+  timespent: Int_comparison_exp
+  timevariance: Int_comparison_exp
+  type: TASKTYPE_comparison_exp
+}
+
+#  ordering options when selecting data
+input Task_orderby {
+  id: orderby
+  projectid: orderby
+  ordernumber: orderby
+  name: orderby
+  status: orderby
+}
+
+type Team {
+  id: ID!
+  datestamp: Float
+  deleted: Boolean
+  name: String
+  code: String
+  customstatus(
+    input: CustomStatus_bool_exp = { deleted: { EQ: false } }
+  ): [CustomStatus]
+  division: Division
+  contacts(
+    input: Contact_bool_exp = { status: { IN: [active, archived] } }
+  ): [Contact]
+  groups(input: Group_bool_exp = { deleted: { EQ: false } }): [Group]
+  projects(
+    input: Project_bool_exp = {
+      deleted: { EQ: false }
+      request: { EQ: false }
+      template: { EQ: false }
+    }
+  ): [Project]
+}
+
+input TeamFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [Team_orderby!]
+
+  #  filter the rows returned
+  where: Team_bool_exp
+}
+
+input Team_bool_exp {
+  AND: [Team_bool_exp]
+
+  #  NOT: Team_bool_exp
+  OR: [Team_bool_exp]
+  id: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  groupid: Int_comparison_exp
+  deleted: Boolean_comparison_exp
+}
+
+#  ordering options when selecting data
+input Team_orderby {
+  id: orderby
+}
+
+# non-HTML text
+scalar Text
+
+type Timerecord {
+  id: ID!
+  datestamp: Float
+  deleted: Boolean
+  timespent: Int
+  cost: Float
+  startdate: DATETIMEFORMAT
+  enddate: DATETIMEFORMAT
+  notes: Text
+  billable: Boolean
+  running: Boolean
+  taskid: Int
+  task: Task
+  project: Project
+  contact: Contact
+
+  #  testunion: Contact
+  apifields(
+    input: ApifieldValue_bool_exp = {
+      deleted: { EQ: false }
+      type: { EQ: time }
+    }
+  ): [ApifieldValue]
+  testunion: FilterSelectedOptions
+}
+
+input TimerecordFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [Timerecord_orderby!]
+
+  #  filter the rows returned
+  where: Timerecord_bool_exp
+}
+
+input Timerecord_bool_exp {
+  AND: [Timerecord_bool_exp]
+
+  #  NOT: Timerecord_bool_exp
+  OR: [Timerecord_bool_exp]
+  id: Int_comparison_exp
+  deleted: Boolean_comparison_exp = { EQ: false }
+  running: Boolean_comparison_exp = { EQ: false }
+  taskid: Int_comparison_exp
+  projectid: Int_comparison_exp
+  contactid: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  taxable: Boolean_comparison_exp
+  billable: Boolean_comparison_exp
+  startdate: Date_comparison_exp
+  enddate: Date_comparison_exp
+  timespent: Int_comparison_exp
+  Project: Project_bool_exp
+  Task: Task_bool_exp
+}
+
+#  ordering options when selecting data
+input Timerecord_orderby {
+  id: orderby
+}
+
+type TimesheetWeek {
+  id: ID!
+  datestamp: Float
+  status: TIMESHEETWEEKSTATUS
+  weekstart: DATEFORMAT
+  contact: [Contact]
+  moderator: [Contact]
+}
+
+input TimesheetWeekFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [TimesheetWeek_orderby!]
+
+  #  filter the rows returned
+  where: TimesheetWeek_bool_exp
+}
+
+input TimesheetWeek_bool_exp {
+  AND: [TimesheetWeek_bool_exp]
+
+  #  NOT: TimesheetWeek_bool_exp
+  OR: [TimesheetWeek_bool_exp]
+  id: Int_comparison_exp
+  contactid: Int_comparison_exp
+  updatedby: Int_comparison_exp
+  weekstart: Date_comparison_exp
+  status: TIMESHEETWEEKSTATUS_comparison_exp
+}
+
+#  ordering options when selecting data
+input TimesheetWeek_orderby {
+  id: orderby
+}
+
+type Token {
+  value: String
+}
+
+# URL String
+scalar URL
+
+input UpdateBoardColumnInput {
+  id: Int!
+  projectid: Int!
+  name: Text
+  color: Color
+  order: Int
+  deleted: Boolean
+}
+
+input UpdateCompanyInput {
+  id: Int!
+  name: String
+  pending: Boolean
+  status: CONTACTSTATUS
+  code: String
+  type: CONTACTTYPE
+  email: String
+  phone: String
+  fax: String
+  website: String
+  address1: String
+  address2: String
+  address3: String
+  city: String
+  state: String
+  zipcode: String
+  country: String
+  twitter: String
+  facebook: String
+  linkedin: String
+  avatarname: String
+}
+
+input UpdateContactInput {
+  #  need to check licenses and adjust billing
+  #  allowlogin: Boolean
+  address1: String
+  address2: String
+  address3: String
+  city: String
+  companyid: Int
+  county: String
+
+  #  divisionid: Int
+  email: EmailAddress
+  emailalerts: Boolean
+  emailsignature: String
+
+  #  fax: String
+  filterview: String
+  firstname: String
+  icalevents: Boolean
+  icalgeneraltasks: Boolean
+  id: Int!
+  image: String
+  lastname: String
+  mobilephone: String
+  pending: Boolean
+  showhistoric: Boolean
+  startpage: String
+  state: String
+  status: CONTACTSTATUS
+
+  #  timesheetlocked: Boolean
+  timezoneadjustment: Int
+
+  #  need to check if assigned to projects
+  #  type: CONTACTTYPE
+  #  going to depreciated
+  #  username: String
+  viewallcompanyarchiveprojects: Boolean
+  viewallcompanyprojects: Boolean
+  viewalltasks: Boolean
+  workphone: String
+  zipcode: String
+}
+
+input UpdateCustomFieldInput {
+  id: Int!
+  name: String
+  deleted: Boolean
+  order: Int
+  staffonly: Boolean
+  active: BOOLEANACTIVEINACTIVE
+}
+
+input UpdateDivisionInput {
+  id: Int!
+  name: String
+  otpstaff: Boolean
+  otpclient: Boolean
+  otpcontractor: Boolean
+}
+
+input UpdateGroupInput {
+  id: Int!
+  name: String
+  displayorder: Float
+}
+
+input UpdateHourlyRateServiceInput {
+  id: Int!
+  name: String
+  description: String
+  servicecost: Float
+  taxable: Boolean
+  deleted: Boolean
+  order: Int
+}
+
+input UpdateOAuthClientInput {
+  id: Int!
+  uid: String
+  clientName: String
+  clientSecret: String
+  redirectUris: String
+  responseTypes: String
+  grantTypes: String
+  scope: String
+  deleted: Boolean
+  summary: String
+  description: String
+  developerName: String
+  url: String
+  privacyUrl: String
+  termsUrl: String
+  iconUrl: String
+}
+
+input UpdateOAuthRefreshTokenInput {
+  uid: String!
+  grantid: String
+  data: JSON
+  clientid: String
+  instance: INSTANCEENUM
+  accountid: Int
+  userid: Int
+  expirestime: BigInteger
+  consumedtime: BigInteger
+}
+
+input UpdateProjectFinancialInput {
+  accountedfor: BOOLEANYN
+  id: Int!
+  invoiced: BOOLEANYN
+  manualinvoicetotal: Float
+  manualquotetotal: Float
+  paid: BOOLEANYN
+  priority: PROJECTPRIORITY
+  purchaseorder: String
+  usemanualinvoicetotal: Boolean
+  usemanualquotetotal: Boolean
+}
+
+input UpdateProjectInput {
+  # request: Boolean
+  # template: Boolean
+  accountedfor: BOOLEANYN
+  categoryid: Int
+  clientaccess: Boolean
+  clientcontactid: Int
+  clientgroupid: Int
+  clientid: ArrayOfIntegers
+  clientteamid: Int
+  clientviewalltasks: Boolean
+  clientviewtime: Boolean
+  companyid: Int
+  completedate: DATEFORMAT
+  contractorid: ArrayOfIntegers
+  customformcontent: String
+  customformtitle: Text
+  customstatusid: Int
+  deleted: Boolean
+  dependent: Boolean
+  description: String
+
+  # divisionid: Int
+  duedate: DATEFORMAT
+  groupid: Int
+  icalcontactid: ArrayOfIntegers
+  id: Int!
+  integrationsetting: JSONString
+  invoiced: BOOLEANYN
+  managerid: Int
+  manualquotetotal: Boolean
+  notification: Boolean
+  number: String
+  overallocatedtime: Boolean
+  paid: BOOLEANYN
+  priority: PROJECTPRIORITY
+  privatenotes: String
+  purchaseorder: String
+  showcompletedtasks: Boolean
+  smartorderingenabled: Boolean
+  staffid: ArrayOfIntegers
+  staffviewallmessages: Boolean
+  staffviewalltasks: Boolean
+  startdate: DATEFORMAT
+  status: PROJECTSTATUS
+  tagid: ArrayOfIntegers
+  teamid: Int
+  templateused: Int
+  timeallocated: Int
+  title: Text
+  type: PROJECTTYPE
+  usemanualinvoicetotal: Boolean
+  usemanualquotetotal: Boolean
+}
+
+input UpdateProjectLineItemInput {
+  id: Int!
+  name: String
+  projectid: Int
+  quoteid: Int
+  displayorder: Int
+  deleted: Boolean
+  quantity: Int
+  chargerate: Float
+  internalcost: Float
+  taxable: Boolean
+  invoiced: Boolean
+  status: PROJECTLINEITEMSTATUS
+  type: LINEITEMTYPE
+  description: String
+}
+
+input UpdateProjectTagInput {
+  id: Int!
+  name: String
+  color: String
+  displayorder: Int
+  deleted: Boolean
+}
+
+input UpdateReportInput {
+  id: Int!
+  reporttemplateid: Int
+  scheduleid: Int
+  name: Text
+  settings: ReportSettingInput
+  version: Int
+  ispublic: Boolean
+  description: SimpleHTML
+  status: CONTACTSTATUS
+  sharedcontactid: ArrayOfIntegers
+  schedulecontactid: ArrayOfIntegers
+}
+
+input UpdateReportTemplateGroupInput {
+  id: Int!
+  name: Text
+  description: SimpleHTML
+  type: REPORTTYPE
+  version: Int
+  deleted: Boolean
+}
+
+input UpdateReportTemplateInput {
+  id: Int!
+  name: Text
+  title: Text
+  displaytype: REPORTDISPLAYTYPE
+  settings: ReportSettingInput
+  version: Int
+  deleted: Boolean
+  advanced: Boolean
+  reporttemplategroupid: Int
+  twinid: Int
+}
+
+input UpdateSchedule {
+  id: Int!
+  type: SCHEDULETYPE
+  objectid: Int
+  recipientid: [Int]
+  endpoint: String
+  postvars: String
+  status: SCHEDULESTATUS
+  minute: MINUTE30
+  hour: HOUR
+  daysofweek: String
+  daysofmonth: String
+  startdate: DATETIMEFORMAT
+  enddate: DATETIMEFORMAT
+}
+
+input UpdateScheduleEvent {
+  id: Int!
+
+  #  scheduleid: Int
+  uuid: String
+  startdate: DATETIMEFORMAT
+  completedate: DATETIMEFORMAT
+  status: SCHEDULEEVENTSTATUS
+  errorcount: Int
+  details: String
+}
+
+input UpdateTaskInput {
+  # dependent: Boolean
+  # handle via a move task mutation
+  # projectid: Int
+  billable: Boolean
+  boardcolumnid: Int
+  categoryid: Int
+  completedate: DATEFORMAT
+
+  #  contact assigned to field. supplied as a list of Ints. Overrides previous values
+  contactid: ArrayOfIntegers
+  currenttask: Boolean
+  deleted: Boolean
+  description: String
+  displaytype: DISPLAYTYPE
+  duedate: DATEFORMAT
+  id: Int!
+  name: String
+  ordernumber: OrderNumber
+
+  #  supplied as a list of Ints. Overrides previous values
+  prerequisiteid: ArrayOfIntegers
+  priority: PROJECTPRIORITY
+  servicecost: Float
+  servicedescription: String
+  servicename: String
+  startdate: DATEFORMAT
+  status: TASKSTATUS
+  tagid: ArrayOfIntegers
+  taxable: Boolean
+  timeallocated: Int
+  type: TASKTYPE
+}
+
+input UpdateTimerecordInput {
+  id: Int!
+
+  #  taskid: Int
+  #  contactid: Int
+  deleted: Boolean
+  timespent: Int!
+  startdate: DATETIMEFORMAT
+  notes: Text
+  running: Boolean = false
+  completetask: Boolean
+}
+
+input UpdateTimerecordNotesInput {
+  id: Int!
+  notes: Text!
+}
+
+input UpdateUserViewMenuInput {
+  id: Int!
+  contactid: Int
+  viewconfigid: Int
+}
+
+input UpdateViewConfigInput {
+  id: Int!
+  userviewconfigid: Int!
+  fields: ArrayOfStrings
+  filters: JSONString
+  sortOrder: String
+  viewGroup: String
+  name: Text
+  deleted: Boolean
+  visible: Boolean
+  active: Boolean
+  type: VIEWCONFIGTYPEINPUT
+}
+
+type User {
+  _id: String!
+
+  #  the underscore means we can link to token with auth.populateUser() in hooks
+  # firstname: String
+  userfullname: String
+}
+
+type UserPermission {
+  contactid: Int
+  id: Int
+  view: Boolean
+  add: Boolean
+  edit: Boolean
+  delete: Boolean
+}
+
+input UserPermissionFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [UserPermission_orderby!]
+
+  #  filter the rows returned
+  where: UserPermission_bool_exp
+}
+
+input UserPermission_bool_exp {
+  AND: [UserPermission_bool_exp]
+
+  #  NOT: UserPermission_bool_exp
+  OR: [UserPermission_bool_exp]
+  view: Boolean_comparison_exp
+  add: Boolean_comparison_exp
+  edit: Boolean_comparison_exp
+  delete: Boolean_comparison_exp
+  contactid: Int_comparison_exp
+  id: Int_comparison_exp
+}
+
+#  ordering options when selecting data
+input UserPermission_orderby {
+  id: orderby
+  name: orderby
+}
+
+type UserViewConfig {
+  id: Int!
+  route: String
+  contactid: Int
+  viewconfigid: Int
+  deleted: Boolean
+  name: String
+  section: VIEWCONFIGSECTION
+  type: VIEWCONFIGTYPE
+  fields: ArrayOfStrings
+  filters: JSONString
+  sortOrder: String
+  viewGroup: String
+  displayorder: Int
+  viewconfig: ViewConfig
+  datestamp: Float
+  contact: Contact
+  division: Division
+}
+
+input UserViewConfigFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [UserViewConfig_orderby!]
+
+  #  filter the rows returned
+  where: UserViewConfig_bool_exp
+}
+
+input UserViewConfig_bool_exp {
+  AND: [UserViewConfig_bool_exp]
+
+  #  NOT: UserViewConfig_bool_exp
+  OR: [UserViewConfig_bool_exp]
+  id: Int_comparison_exp
+  contactid: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  viewconfigid: Int_comparison_exp
+  section: VIEWCONFIGSECTION_comparison_exp
+  deleted: Boolean_comparison_exp
+  type: VIEWCONFIGTYPE_comparison_exp
+  datestamp: Float_comparison_exp
+}
+
+#  ordering options when selecting data
+input UserViewConfig_orderby {
+  id: orderby
+  displayorder: orderby
+}
+
+type UserViewMenu {
+  id: ID!
+  contactid: Int
+  viewconfigid: Int
+  displayorder: Int
+  datestamp: Float
+  viewconfig: ViewConfig
+  contact: Contact
+}
+
+input UserViewMenuFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [UserViewMenu_orderby!]
+
+  #  filter the rows returned
+  where: UserViewMenu_bool_exp
+}
+
+input UserViewMenu_bool_exp {
+  AND: [UserViewMenu_bool_exp]
+
+  #  NOT: UserViewMenu_bool_exp
+  OR: [UserViewMenu_bool_exp]
+  id: Int_comparison_exp
+  contactid: Int_comparison_exp
+  viewconfigid: Int_comparison_exp
+  datestamp: Float_comparison_exp
+  ViewConfig: ViewConfig_bool_exp
+}
+
+#  ordering options when selecting data
+input UserViewMenu_orderby {
+  id: orderby
+  displayorder: orderby
+}
+
+enum VIEWCONFIGSECTION {
+  project
+  task
+  contact
+  invoice
+  quote
+}
+
+input VIEWCONFIGSECTION_comparison_exp {
+  EQ: VIEWCONFIGSECTION
+  NEQ: VIEWCONFIGSECTION
+  IN: [VIEWCONFIGSECTION!]
+  NIN: [VIEWCONFIGSECTION!]
+}
+
+enum VIEWCONFIGTYPE {
+  standard
+  shared
+  private
+}
+
+enum VIEWCONFIGTYPEINPUT {
+  shared
+  private
+}
+
+input VIEWCONFIGTYPE_comparison_exp {
+  EQ: VIEWCONFIGTYPE
+  NEQ: VIEWCONFIGTYPE
+  IN: [VIEWCONFIGTYPE!]
+  NIN: [VIEWCONFIGTYPE!]
+}
+
+type ValidSchedule {
+  crontab: String
+  crondesc: String
+
+  #  currently not implemented
+  cronnextrun: String
+}
+
+input ValidScheduleInput {
+  minute: String!
+  hour: String!
+  daysofweek: String!
+  daysofmonth: String!
+  type: SCHEDULETYPE!
+}
+
+input VerifyResetTokenInput {
+  resettoken: String!
+  account: AccountCreateLoginInput!
+}
+
+input VerifyUserCredentialsInput {
+  username: String!
+  password: String!
+  resettoken: String
+  account: AccountCreateLoginInput!
+}
+
+input VerifyUserOneTimeTokenInput {
+  email: String!
+  ottvalue: OTTVALUE
+  account: AccountCreateLoginInput!
+}
+
+type ViewConfig {
+  id: Int!
+  userviewconfigid: Int
+  contactid: Int
+  creatorid: Int
+  divisionid: Int
+  datestamp: Float
+  deleted: Boolean
+  visible: Boolean
+  active: Boolean
+  fields: ArrayOfStrings
+  filters: JSONString
+  name: String
+  type: VIEWCONFIGTYPE
+  section: VIEWCONFIGSECTION
+  division: Division
+  owner: [Contact]
+  contact: [Contact]
+}
+
+input ViewConfigFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [ViewConfig_orderby!]
+
+  #  filter the rows returned
+  where: ViewConfig_bool_exp
+}
+
+input ViewConfig_bool_exp {
+  AND: [ViewConfig_bool_exp]
+
+  #  NOT: ViewConfig_bool_exp
+  OR: [ViewConfig_bool_exp]
+  id: Int_comparison_exp
+  contactid: Int_comparison_exp
+  creatorid: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  datestamp: Float_comparison_exp
+  name: String_comparison_exp
+  type: VIEWCONFIGTYPE_comparison_exp
+  section: VIEWCONFIGSECTION_comparison_exp
+  deleted: Boolean_comparison_exp = { EQ: false }
+  visible: Boolean_comparison_exp
+  active: Boolean_comparison_exp
+}
+
+#  ordering options when selecting data
+input ViewConfig_orderby {
+  id: orderby
+}
+
+type Viewer {
+  _id: Int!
+  viewstate: String!
+  contactid: [Int]
+  companyid: Int
+  groupid: [Int]
+  teamid: [Int]
+  divisionid: Int
+}
+
+enum WORKLOADMODE {
+  workload
+  availability
+  performance
+}
+
+type Workload {
+  _id: ID!
+  task: Task
+  staffcount: Int
+  projectid: Int
+  weekdaysbetween: Int
+  value: Float
+  staff(
+    input: Contact_bool_exp = {
+      allowlogin: { EQ: true }
+      status: { IN: [active, archived] }
+      type: { EQ: "staff" }
+    }
+  ): [Contact]
+}
+
+input WorkloadFilter {
+  #  distinct select on columns
+  # distinct_on: [Category_select_column!]
+  #   limit the number of rows returned
+  limit: Int
+
+  #  skip the first n rows. Use only with orderby
+  offset: Int
+
+  # sort the rows by one or more columns
+  orderby: [Workload_orderby!]
+
+  #  filter the rows returned
+  where: Workload_bool_exp
+}
+
+input WorkloadProject_bool_exp {
+  AND: [WorkloadProject_bool_exp]
+
+  #  NOT: Workload_bool_exp
+  OR: [WorkloadProject_bool_exp]
+  categoryid: Int_comparison_exp
+  companyid: Int_comparison_exp
+  clientid: Int_comparison_exp
+  clientgroupid: Int_comparison_exp
+  clientcontactid: Int_comparison_exp
+  tagid: Int_comparison_exp
+  Project: WorkloadProject_bool_exp
+  type: PROJECTTYPE_comparison_exp
+}
+
+input Workload_bool_exp {
+  AND: [Workload_bool_exp]
+
+  #  NOT: Workload_bool_exp
+  OR: [Workload_bool_exp]
+  projectid: Int_comparison_exp
+  contactid: Int_comparison_exp
+  divisionid: Int_comparison_exp
+  billable: Boolean_comparison_exp
+  date: Date_comparison_exp_required
+  Project: WorkloadProject_bool_exp
+}
+
+#  ordering options when selecting data
+input Workload_orderby {
+  id: orderby
+}
+
+#  column ordering options
+enum orderby {
+  #  in the ascending order, nulls last
+  asc
+
+  #  in the ascending order, nulls first
+  asc_nulls_first
+
+  #  in the ascending order, nulls last
+  asc_nulls_last
+
+  #  in the descending order, nulls first
+  desc
+
+  #  in the descending order, nulls first
+  desc_nulls_first
+
+  #  in the descending order, nulls last
+  desc_nulls_last
+}
