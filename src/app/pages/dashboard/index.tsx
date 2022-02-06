@@ -142,11 +142,11 @@ const Dashboard: React.FC = () => {
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
-        <Grid container>
-          <Grid item lg={3} md={3} xs={12}>
+        <Grid container spacing={6} justifyContent="space-between">
+          <Grid item lg={3} md={4} xs={12}>
             <TaskSelect setOption={setTaskOption} />
           </Grid>
-          <Grid item lg={3} md={3} xs={12}>
+          <Grid item lg={3} md={4} xs={12}>
             <TimerDisplay
               minutes={2}
               seconds={12}

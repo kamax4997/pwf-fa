@@ -28,6 +28,8 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       display: 'flex',
+      width: 'fit-content',
+      textAlign: 'center',
     },
     details: {
       display: 'flex',
@@ -37,7 +39,8 @@ const useStyles = makeStyles((theme: Theme) =>
       flex: '1 0 auto',
     },
     cover: {
-      width: 100,
+      width: 96,
+      paddingRight: 32,
     },
     controls: {
       display: 'flex',
