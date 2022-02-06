@@ -26,8 +26,8 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: 'auto',
     },
     timeEntries: {
-      width: '100%',
-    }
+      paddingTop: '0px !important'
+    },
   }),
 )
 
@@ -76,8 +76,6 @@ const Dashboard: React.FC = () => {
       }
     `, { },
   )
-
-  console.log(dashboardData, "-----------")
   
   const onTimerOn = React.useCallback(() => {
     if (currentTask) {
@@ -148,13 +146,12 @@ const Dashboard: React.FC = () => {
           </Grid>
           <Grid item lg={3} md={4} xs={12}>
             <TimerDisplay
-              minutes={2}
-              seconds={12}
+              timeSpent={convertTimeSpent('')}
               onTimerOn={onTimerOn}
               onTimerOff={onTimerOff} />
           </Grid>
 
-          <Grid item lg={12} md={12} xs={12}>
+          <Grid item lg={12} md={12} xs={12} className={classes.timeEntries}>
             <TimeEntries task={currentTask as ITask} />
           </Grid>
         </Grid>

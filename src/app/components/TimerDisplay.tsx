@@ -18,8 +18,7 @@ import PWFCogsIntegration from 'assets/images/PWF-cogs-integration.png'
 import useGraphql from 'app/hooks/useGraphql'
 
 interface ITimerDisplayProps {
-    minutes: number
-    seconds: number
+    timeSpent: string
     onTimerOn: () => void
     onTimerOff: () => void
 }
@@ -57,7 +56,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const TimerDisplay: React.FC<ITimerDisplayProps> = (props: ITimerDisplayProps) => {
   const classes = useStyles()
-  const { minutes, seconds, onTimerOn, onTimerOff } = props
+  const { timeSpent, onTimerOn, onTimerOff } = props
   const { isTimerOn } = useGraphql()
 
   return (
@@ -65,7 +64,7 @@ const TimerDisplay: React.FC<ITimerDisplayProps> = (props: ITimerDisplayProps) =
       <div className={classes.details}>
         <CardContent className={classes.content}>
           <Typography component="h5" variant="h5">
-            {minutes}:{seconds}
+            {timeSpent}
           </Typography>
         </CardContent>
         <div className={classes.controls}>
