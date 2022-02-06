@@ -14,7 +14,12 @@ import { graphql } from 'babel-plugin-relay/macro'
 import useGraphql from 'app/hooks/useGraphql'
 import { ITask } from 'utils/types'
 import { toast } from 'react-toastify'
-import { TaskSelect, TimeEntries, TimerDisplay } from 'app/components'
+import { 
+  TaskSelect, 
+  TimeEntries, 
+  TimerDisplay, 
+  NoteModal 
+} from 'app/components'
 import { startTimerMutation, stopTimerMutation } from 'app/graphql/mutations'
 import { convertRecordedTime } from 'utils/helpers'
 
@@ -49,7 +54,7 @@ const Dashboard: React.FC = () => {
 
   const [currentTask, setCurrentTask] = React.useState<ITask>()
   const [recordedTime, setRecordedTime] = React.useState(0)
-  const [isModalOpen, setIsModalOpen] = React.useState(false)
+  const [isOpen, setIsOpen] = React.useState(false)
 
   const dashboardData = useLazyLoadQuery<any>(
     graphql`
@@ -96,6 +101,7 @@ const Dashboard: React.FC = () => {
   const onTimerOff = React.useCallback(() => {
     if (currentTask) {
       setRecordedTime(0)
+      setIsOpen(true)
       stopTimerMutation(currentTask.id, '', stopTimer)
       toast.success('Timer Off!')
     } else {
@@ -116,11 +122,11 @@ const Dashboard: React.FC = () => {
 
   React.useEffect(() => {
     if (isTimerOn) {
-      const myInterval = setTimeout(() => {
+      const myInterval = setInterval(() => {
         setRecordedTime(recordedTime + 1)
       }, 1000)
       return () => {
-        clearTimeout(myInterval)
+        clearInterval(myInterval)
       }
     }
   }, [isTimerOn, recordedTime, setRecordedTime])
@@ -145,7 +151,8 @@ const Dashboard: React.FC = () => {
             <TimerDisplay
               timeSpent={convertRecordedTime(recordedTime.toString())}
               onTimerOn={onTimerOn}
-              onTimerOff={onTimerOff} />
+              onTimerOff={onTimerOff} 
+            />
           </Grid>
 
           <Grid item lg={12} md={12} xs={12} className={classes.timeEntries}>
@@ -153,6 +160,10 @@ const Dashboard: React.FC = () => {
           </Grid>
         </Grid>
       </Paper>
+      <NoteModal
+        isOpen={isOpen}
+        currentTask={currentTask}
+        handleClose={() => setIsOpen(false)} />
     </div>
   )
 }

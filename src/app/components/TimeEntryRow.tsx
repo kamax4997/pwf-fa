@@ -25,19 +25,19 @@ const TimeEntryRow: React.FC<ITimeEntryRowProps> = (props: ITimeEntryRowProps) =
 
   return (
     <>
-      <StyledTableCell component="th" scope="row">
+      <StyledTableCell align="center" component="th" scope="row">
         <Typography variant="h6">{data.notes}</Typography>
       </StyledTableCell>
-      <StyledTableCell align="right">
+      <StyledTableCell align="center">
         {formatDate(new Date(data?.startdate)) || "-"}
       </StyledTableCell>
-      <StyledTableCell align="right">
+      <StyledTableCell align="center">
         {formatDate(new Date(data?.enddate)) || "-"}
       </StyledTableCell>
-      <StyledTableCell align="right">
+      <StyledTableCell align="center">
         {convertRecordedTime(data?.timespent)}
       </StyledTableCell>
-      <StyledTableCell align="right">
+      <StyledTableCell align="center">
         {data?.contact.fullname}
       </StyledTableCell>
     </>

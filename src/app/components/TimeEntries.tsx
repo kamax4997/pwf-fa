@@ -12,7 +12,8 @@ import {
   TableContainer, 
   TableHead, 
   TableRow, 
-  Paper 
+  Paper,
+  Typography
 } from '@material-ui/core'
 import { ITask, ITimeRecord } from "utils/types"
 import TimeEntryRow from "./TimeEntryRow"
