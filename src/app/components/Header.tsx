@@ -1,17 +1,38 @@
-import React, { useState, useCallback } from 'react'
-import { Avatar, Menu, MenuItem } from '@material-ui/core'
-import { useHistory, Link } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import logoUrl from '../../assets/images/logo.png'
+import React from 'react'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import AppBar from '@material-ui/core/AppBar'
+import Toolbar from '@material-ui/core/Toolbar'
+import Typography from '@material-ui/core/Typography'
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+    },
+    appName: {
+      marginRight: theme.spacing(2),
+    },
+    companyName: {
+      flexGrow: 1,
+    },
+  }),
+)
 
 const Header: React.FC = () => {
-  const history = useHistory()
+  const classes = useStyles()
 
   return (
-    <div className="header-container">
-      <div>
-        <h2 className="header-title">ProWorkflow Timer</h2>
-      </div>
+    <div className={classes.root}>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" className={classes.companyName}>
+            ProWorkflow
+          </Typography>
+          <Typography variant="h6" className={classes.appName}>
+            Time Tracker
+          </Typography>
+        </Toolbar>
+      </AppBar>
     </div>
   )
 }
