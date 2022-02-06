@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core/styles'
 import { useLazyLoadQuery } from 'react-relay'
 import { graphql } from 'babel-plugin-relay/macro'
-import useGraphql from 'app/hooks/useGraphql'
+import useTimer from 'app/hooks/useTimer'
 import { ITask } from 'utils/types'
 import { toast } from 'react-toastify'
 import { 
@@ -49,8 +49,9 @@ const Dashboard: React.FC = () => {
     isTimerOn,
     setTasks, 
     startTimer, 
-    stopTimer 
-  } = useGraphql()
+    stopTimer,
+    tasks
+  } = useTimer()
 
   const [currentTask, setCurrentTask] = React.useState<ITask>()
   const [recordedTime, setRecordedTime] = React.useState(0)
@@ -90,19 +91,17 @@ const Dashboard: React.FC = () => {
   
   const onTimerOn = React.useCallback(() => {
     if (currentTask) {
-      setTasks(dashboardData.tasks)
       startTimerMutation(currentTask.id, '', startTimer)
       toast.success('Timer On!')
     } else {
       toast.error('Please select the task!')
     }
-  }, [currentTask, dashboardData])
+  }, [currentTask])
 
-  const onTimerOff = React.useCallback(() => {
+  const onTimerOff = React.useCallback((note: string) => {
     if (currentTask) {
       setRecordedTime(0)
-      setIsOpen(true)
-      stopTimerMutation(currentTask.id, '', stopTimer)
+      stopTimerMutation(currentTask.id, note, stopTimer)
       toast.success('Timer Off!')
     } else {
       toast.error('Please select the task!')
@@ -112,13 +111,13 @@ const Dashboard: React.FC = () => {
   const onSelect = React.useCallback((t: ITask | undefined) => {
     setCurrentTask(t)
     if (isTimerOn && currentTask) {
-      onTimerOff()
+      setIsOpen(true)
     }
   }, [setCurrentTask, isTimerOn])
 
   React.useEffect(() => {
     setTasks(dashboardData.tasks)
-  }, [dashboardData])
+  }, [dashboardData, setTasks])
 
   React.useEffect(() => {
     if (isTimerOn) {
@@ -131,7 +130,7 @@ const Dashboard: React.FC = () => {
     }
   }, [isTimerOn, recordedTime, setRecordedTime])
 
-  console.log(dashboardData)
+  console.log(tasks)
 
   return (
     <div className={classes.root}>
@@ -151,7 +150,7 @@ const Dashboard: React.FC = () => {
             <TimerDisplay
               timeSpent={convertRecordedTime(recordedTime.toString())}
               onTimerOn={onTimerOn}
-              onTimerOff={onTimerOff} 
+              setIsOpen={() => setIsOpen(true)} 
             />
           </Grid>
 
@@ -163,7 +162,8 @@ const Dashboard: React.FC = () => {
       <NoteModal
         isOpen={isOpen}
         currentTask={currentTask}
-        handleClose={() => setIsOpen(false)} />
+        handleClose={() => setIsOpen(false)}
+        onTimerOff={onTimerOff} />
     </div>
   )
 }

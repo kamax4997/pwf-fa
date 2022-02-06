@@ -3,7 +3,7 @@ import { setTasks, startTimer, stopTimer } from 'utils/redux/slices/dashboard'
 import { IRootState } from 'utils/redux/store'
 import { ITask } from 'utils/types'
 
-const useGraphql = () => {
+const useTimer = () => {
   const dispatch = useDispatch()
 
   const {
@@ -25,4 +25,4 @@ const useGraphql = () => {
   }
 }
 
-export default useGraphql
+export default useTimer

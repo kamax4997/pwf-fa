@@ -14,12 +14,12 @@ import {
 import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import StopIcon from '@material-ui/icons/Stop'
 import PWFCogsIntegration from 'assets/images/PWF-cogs-integration.png'
-import useGraphql from 'app/hooks/useGraphql'
+import useTimer from 'app/hooks/useTimer'
 
 interface ITimerDisplayProps {
     timeSpent: string
     onTimerOn: () => void
-    onTimerOff: () => void
+    setIsOpen: () => void
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -53,8 +53,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const TimerDisplay: React.FC<ITimerDisplayProps> = (props: ITimerDisplayProps) => {
   const classes = useStyles()
-  const { timeSpent, onTimerOn, onTimerOff } = props
-  const { isTimerOn } = useGraphql()
+  const { timeSpent, onTimerOn, setIsOpen } = props
+  const { isTimerOn } = useTimer()
 
   return (
     <Card className={classes.root}>
@@ -75,7 +75,7 @@ const TimerDisplay: React.FC<ITimerDisplayProps> = (props: ITimerDisplayProps) =
           <IconButton 
             aria-label="stop" 
             disabled={!isTimerOn} 
-            onClick={onTimerOff}
+            onClick={setIsOpen}
           >
             <StopIcon className={classes.controlButton} />
           </IconButton>

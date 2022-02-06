@@ -3,7 +3,7 @@ import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import Modal from '@material-ui/core/Modal'
 import Backdrop from '@material-ui/core/Backdrop'
 import Fade from '@material-ui/core/Fade'
-import { Typography, Input, Grid, Button, InputLabel } from '@material-ui/core'
+import { Input, Grid, Button, InputLabel } from '@material-ui/core'
 import { ITask } from 'utils/types'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -31,11 +31,30 @@ interface INoteModalProps {
   isOpen: boolean
   currentTask: ITask | undefined
   handleClose: () => void
+  onTimerOff: (note: string) => void
 }
 
 const NoteModal: React.FC<INoteModalProps> = (props: INoteModalProps) => {
   const classes = useStyles()
-  const { isOpen, handleClose,currentTask } = props
+  const { isOpen, handleClose, currentTask, onTimerOff } = props
+  const defaultNote = currentTask?.name.concat('-', '') as string
+
+  const [note, setNote] = React.useState<string>(defaultNote)
+
+
+  const onSave = () => {
+    handleClose()
+    onTimerOff(note)
+  }
+
+  const onClose = () => {
+    handleClose()
+    onTimerOff(defaultNote)
+  }
+
+  const onChange = (event: any) => {
+    setNote(event.target.value as string)
+  }
 
   return (
     <div>
@@ -55,8 +74,9 @@ const NoteModal: React.FC<INoteModalProps> = (props: INoteModalProps) => {
               <Grid item className={classes.noteInput}>
                 <form className={classes.noteInput} noValidate autoComplete="off">
                   <InputLabel id="task-select-label">Add your note</InputLabel>
-                  <Input 
-                    defaultValue={currentTask?.name.concat('-', '')}
+                  <Input
+                    value={note}
+                    onChange={onChange}
                     placeholder="Placeholder"
                     multiline
                     rows={3}
@@ -67,12 +87,12 @@ const NoteModal: React.FC<INoteModalProps> = (props: INoteModalProps) => {
             </Grid>
             <Grid container spacing={3} justifyContent="flex-end">
               <Grid item>
-                <Button variant="contained" color="primary">
+                <Button variant="contained" color="primary" onClick={onSave}>
                   Save
                 </Button>
               </Grid>
               <Grid item>
-                <Button variant="contained" color="secondary">
+                <Button variant="contained" color="secondary" onClick={onClose}>
                   Cancel
                 </Button>
               </Grid>

@@ -1,6 +1,6 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import useGraphql from 'app/hooks/useGraphql'
+import useTimer from 'app/hooks/useTimer'
 import { ITask } from 'utils/types'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -25,7 +25,7 @@ const useStyles = makeStyles({
 const TaskSelect: React.FC<ITaskSelectProps> = (props: ITaskSelectProps) => {
   const classes = useStyles()
   const { currentTask, setOption } = props
-  const { tasks } = useGraphql()
+  const { tasks } = useTimer()
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     const newTask = tasks.find((t: ITask) => t.id === event.target.value)
