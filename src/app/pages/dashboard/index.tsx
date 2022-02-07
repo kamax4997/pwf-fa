@@ -12,7 +12,7 @@ import {
 import { usePreloadedQuery, PreloadedQuery, useLazyLoadQuery } from 'react-relay'
 import { graphql } from 'babel-plugin-relay/macro'
 import useTimer from 'app/hooks/useTimer'
-import { ITask } from 'utils/types'
+import { ITask, ITimeRecord } from 'utils/types'
 import { toast } from 'react-toastify'
 import { 
   TaskSelect, 
@@ -93,7 +93,6 @@ const Dashboard: React.FC<IDashboardProps> = (props: IDashboardProps) => {
   const [currentTask, setCurrentTask] = React.useState<ITask>()
   const [recordedTime, setRecordedTime] = React.useState(0)
   const [isOpen, setIsOpen] = React.useState(false)
-  const [startDate, setStartDate] = React.useState('')
 
   let dashboardData = queryRef && usePreloadedQuery(
     Dashboard_Query, 
@@ -118,10 +117,16 @@ const Dashboard: React.FC<IDashboardProps> = (props: IDashboardProps) => {
   }, [currentTask])
 
   const onTimerOff = React.useCallback((note: string) => {
-    console.log("===============", note)
     if (currentTask) {
       try {
-        stopTimerMutation(currentTask.id, note, stopTimer)
+        stopTimerMutation(
+          currentTask.id, 
+          note, 
+          (
+            stopTimerecord: ITimeRecord, 
+            taskId: string
+          ) => stopTimer(stopTimerecord, taskId)
+        )
         setRecordedTime(0)
         queryRef && refresh()
         toast.success('Timer Off!')
@@ -144,6 +149,7 @@ const Dashboard: React.FC<IDashboardProps> = (props: IDashboardProps) => {
     const tasksData = dashboardData?.tasks?.map(task => {
       return {...task} as ITask
     })
+    console.log(tasksData, "effect")
 
     if (tasksData) setTasks(tasksData)
   }, [dashboardData])

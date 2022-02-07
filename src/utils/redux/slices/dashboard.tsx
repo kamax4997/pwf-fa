@@ -1,8 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { AppDispatch } from 'utils/redux/store'
-import { ITask } from 'utils/types'
+import { ITask, ITimeRecord } from 'utils/types'
 
-const initialState = {
+interface IDashboardStates {
+  isLoading: boolean
+  isTimerOn: boolean
+  startDate: string
+  tasks: ITask[]
+}
+
+const initialState: IDashboardStates = {
   isLoading: false,
   isTimerOn: false,
   startDate: '',
@@ -34,8 +41,23 @@ const slice = createSlice({
       state.startDate = action.payload.startDate
     },
     // TIMER OFF
-    onTimerOff(state) {
+    onTimerOff(state, action) {
+      console.log(action.payload, "-----------------")
+      const newTasks = state.tasks.map((task: ITask) => {
+        if (task.id === action.payload.taskId) {
+          const newTask: ITask = {
+            id: task.id,
+            name: task.name,
+            // timerecords: task?.timerecords?.push(
+            //   action.payload.stopTimerecord as ITimeRecord
+            // ),
+            taskTotalTimespent: task.taskTotalTimespent
+          }
+          return newTask
+        }
+      })
       state.isTimerOn = false
+      // state.tasks = newTasks
     },
     // SET TASKS
     setTasks(state, action) {
@@ -68,8 +90,11 @@ export function startTimer(startDate: string) {
   }
 }
 
-export function stopTimer() {
+export function stopTimer(stopTimerecord: ITimeRecord, taskId: string) {
   return async (dispatch: AppDispatch) => {
-    dispatch(slice.actions.onTimerOff())
+    dispatch(slice.actions.onTimerOff({
+      stopTimerecord,
+      taskId
+    }))
   }
 }

@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { setTasks, startTimer, stopTimer } from 'utils/redux/slices/dashboard'
 import { IRootState } from 'utils/redux/store'
-import { ITask } from 'utils/types'
+import { ITask, ITimeRecord } from 'utils/types'
 
 const useTimer = () => {
   const dispatch = useDispatch()
@@ -24,7 +24,9 @@ const useTimer = () => {
     startTimer: (startDate: string) => dispatch(
       startTimer(startDate)
     ),
-    stopTimer: () => dispatch(stopTimer()),
+    stopTimer: (stopTimerecord: ITimeRecord, taskId: string) => dispatch(
+      stopTimer(stopTimerecord, taskId)
+    ),
   }
 }
 

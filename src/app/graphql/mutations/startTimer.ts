@@ -31,15 +31,13 @@ const startTimerMutation = (
     },
   }
 
-  let startDate = ''
-
   commitMutation(
     environment,
     {
       mutation,
       variables,
       onCompleted: (response: any) => {
-        startDate = response?.startTimerecord?.startdate
+        const startDate = response?.startTimerecord?.startdate
         callback(startDate)
       },
       onError: err => console.error(err),

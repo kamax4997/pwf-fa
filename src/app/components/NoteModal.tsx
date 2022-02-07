@@ -6,6 +6,7 @@ import Fade from '@material-ui/core/Fade'
 import { Input, Grid, Button, InputLabel } from '@material-ui/core'
 import { ITask } from 'utils/types'
 import useTimer from 'app/hooks/useTimer'
+import { formatDate } from 'utils/helpers'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,7 +42,7 @@ const NoteModal: React.FC<INoteModalProps> = (props: INoteModalProps) => {
   const { startDate } = useTimer()
   
   const defaultNote = React.useMemo(() => {
-    return currentTask?.name.concat('-', startDate) as string
+    return currentTask?.name.concat('-', formatDate(new Date(startDate))) as string
   }, [currentTask, startDate])
 
   const [note, setNote] = React.useState<string>('')

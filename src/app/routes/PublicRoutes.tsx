@@ -1,8 +1,8 @@
-import React, { Suspense, useCallback, useEffect } from 'react'
+import React, { Suspense, useCallback, useEffect, useState } from 'react'
 import { Route, Switch } from 'react-router-dom'
 import Loading from 'app/components/Loading'
 import Dashboard, { Dashboard_Query } from 'app/pages/dashboard'
-import { useQueryLoader, PreloadFetchPolicy } from 'react-relay'
+import { useQueryLoader } from 'react-relay'
 import { 
   dashboardQuery as DashboardQuery
 } from 'app/pages/dashboard/__generated__/dashboardQuery.graphql'
@@ -15,7 +15,6 @@ const PublicRoutes = () => {
   }, [])
 
   const refresh = useCallback(() => {
-    console.log("----------- refresh -------------")
     loadDashboardQuery({fetchPolicy: 'network-only'})
   }, [])
 
@@ -23,7 +22,11 @@ const PublicRoutes = () => {
     <Suspense fallback={<Loading />}>
       <Switch>
         <Route path="/" render={(props) => (
-          dashboardQuery && <Dashboard {...props} queryRef={dashboardQuery} refresh={refresh} />
+          dashboardQuery && <Dashboard
+           {...props} 
+           queryRef={dashboardQuery} 
+           refresh={refresh}
+          />
         )} />
       </Switch>
     </Suspense>
