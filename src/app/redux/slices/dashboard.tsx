@@ -102,11 +102,15 @@ export function stopTimer(stopTimerecord: ITimeRecord, taskId: string) {
       stopTimerecord,
       taskId
     }))
+
+    return true
   }
 }
 
 export function onStopRecording() {
   return async (dispatch: AppDispatch) => {
     dispatch(slice.actions.onStopRecording())
+
+    return true
   }
 }

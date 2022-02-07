@@ -9,7 +9,7 @@ import {
   createStyles, 
   Theme 
 } from '@material-ui/core/styles'
-import { usePreloadedQuery, PreloadedQuery, useLazyLoadQuery } from 'react-relay'
+import { usePreloadedQuery, PreloadedQuery } from 'react-relay'
 import { graphql } from 'babel-plugin-relay/macro'
 import useTimer from 'app/hooks/useTimer'
 import { ITask, ITimeRecord } from 'utils/types'

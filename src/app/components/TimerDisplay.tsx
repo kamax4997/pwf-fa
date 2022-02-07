@@ -15,12 +15,11 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import StopIcon from '@material-ui/icons/Stop'
 import PWFCogsIntegration from 'assets/images/PWF-cogs-integration.png'
 import useTimer from 'app/hooks/useTimer'
-import { ITimeRecord } from 'utils/types'
 
 interface ITimerDisplayProps {
-    timeSpent: string
-    onTimerOn: () => void
-    setIsOpen: () => void
+  timeSpent: string
+  onTimerOn: () => void
+  setIsOpen: () => void
 }
 
 const useStyles = makeStyles((theme: Theme) =>
