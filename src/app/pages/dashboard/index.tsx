@@ -9,7 +9,7 @@ import {
   createStyles, 
   Theme 
 } from '@material-ui/core/styles'
-import { usePreloadedQuery, PreloadedQuery } from 'react-relay'
+import { usePreloadedQuery, PreloadedQuery, useLazyLoadQuery } from 'react-relay'
 import { graphql } from 'babel-plugin-relay/macro'
 import useTimer from 'app/hooks/useTimer'
 import { ITask } from 'utils/types'
@@ -75,7 +75,7 @@ export const Dashboard_Query = graphql`
 `
 
 interface IDashboardProps {
-  queryRef: PreloadedQuery<dashboardQuery> | undefined | null
+  queryRef: PreloadedQuery<dashboardQuery>
   refresh: () => void
 }
 
@@ -93,16 +93,20 @@ const Dashboard: React.FC<IDashboardProps> = (props: IDashboardProps) => {
   const [currentTask, setCurrentTask] = React.useState<ITask>()
   const [recordedTime, setRecordedTime] = React.useState(0)
   const [isOpen, setIsOpen] = React.useState(false)
-  console.log("================", queryRef)
-  const dashboardData = usePreloadedQuery(
+
+  let dashboardData = queryRef && usePreloadedQuery(
     Dashboard_Query, 
     queryRef as PreloadedQuery<dashboardQuery>
   )
   
   const onTimerOn = React.useCallback(() => {
     if (currentTask) {
-      startTimerMutation(currentTask.id, '', startTimer)
-      toast.success('Timer On!')
+      try {
+        startTimerMutation(currentTask.id, '', startTimer)
+        toast.success('Timer On!')
+      } catch(error) {
+        toast.error('Something went wrong!')
+      }
     } else {
       toast.error('Please select the task!')
     }
@@ -110,10 +114,14 @@ const Dashboard: React.FC<IDashboardProps> = (props: IDashboardProps) => {
 
   const onTimerOff = React.useCallback((note: string) => {
     if (currentTask) {
-      setRecordedTime(0)
-      stopTimerMutation(currentTask.id, note, stopTimer)
-      toast.success('Timer Off!')
-      refresh()
+      try {
+        stopTimerMutation(currentTask.id, note, stopTimer)
+        setRecordedTime(0)
+        toast.success('Timer Off!')
+        queryRef && refresh()
+      } catch(error) {
+        toast.error('Something went wrong!')
+      }
     } else {
       toast.error('Please select the task!')
     }
@@ -127,8 +135,12 @@ const Dashboard: React.FC<IDashboardProps> = (props: IDashboardProps) => {
   }, [setCurrentTask, isTimerOn])
 
   React.useEffect(() => {
-    // setTasks(dashboardData?.tasks)
-  }, [dashboardData, setTasks])
+    const tasksData = dashboardData?.tasks?.map(task => {
+      return {...task} as ITask
+    })
+
+    if (tasksData) setTasks(tasksData)
+  }, [dashboardData])
 
   React.useEffect(() => {
     if (isTimerOn) {
