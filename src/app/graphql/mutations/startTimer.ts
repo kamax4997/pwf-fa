@@ -19,7 +19,11 @@ const mutation = graphql`
   }
 `
 
-const startTimerMutation = (taskId: string, notes: string, callback: (startDate: string) => void) => {
+const startTimerMutation = (
+  taskId: string, 
+  notes: string, 
+  callback: (startDate: string) => void
+) => {
   const variables = {
     input: {
       taskid: taskId,

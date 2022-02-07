@@ -39,7 +39,7 @@ const NoteModal: React.FC<INoteModalProps> = (props: INoteModalProps) => {
   const classes = useStyles()
   const { isOpen, handleClose, currentTask, onTimerOff } = props
   const { startDate } = useTimer()
-
+  
   const defaultNote = React.useMemo(() => {
     return currentTask?.name.concat('-', startDate) as string
   }, [currentTask, startDate])

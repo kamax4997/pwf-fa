@@ -60,7 +60,9 @@ export function setTasks(tasks: ITask[]) {
 
 export function startTimer(startDate: string) {
   return async (dispatch: AppDispatch) => {
-    dispatch(slice.actions.onTimerOn(startDate))
+    dispatch(slice.actions.onTimerOn({
+      startDate
+    }))
 
     return true
   }
