@@ -1,6 +1,6 @@
 import React from 'react'
 import { withStyles, Theme, createStyles } from '@material-ui/core/styles'
-import { Typography, TableCell } from '@material-ui/core'
+import { TableCell } from '@material-ui/core'
 import { ITimeRecord } from 'utils/types'
 import { formatDate, convertRecordedTime } from 'utils/helpers'
 
@@ -26,7 +26,7 @@ const TimeEntryRow: React.FC<ITimeEntryRowProps> = (props: ITimeEntryRowProps) =
   return (
     <>
       <StyledTableCell align="center" component="th" scope="row">
-        <Typography variant="h6">{data.notes}</Typography>
+        {data.notes}
       </StyledTableCell>
       <StyledTableCell align="center">
         {formatDate(new Date(data?.startdate)) || "-"}
