@@ -27,7 +27,7 @@ const stopTimerMutation = (taskId: string, notes: string, callback: () => void) 
     },
   }
 
-  commitMutation(
+  const data = commitMutation(
     environment,
     {
       mutation,
@@ -38,6 +38,8 @@ const stopTimerMutation = (taskId: string, notes: string, callback: () => void) 
       onError: err => console.error(err),
     },
   )
+
+  console.log("mutation", data)
 }
 
 export default stopTimerMutation

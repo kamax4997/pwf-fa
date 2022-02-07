@@ -7,7 +7,7 @@ const useTimer = () => {
   const dispatch = useDispatch()
 
   const {
-    isLoading, isTimerOn, tasks
+    isLoading, isTimerOn, tasks, startDate
   } = useSelector(
     (state: IRootState) => state.dashboard,
   )
@@ -16,11 +16,14 @@ const useTimer = () => {
     isLoading,
     isTimerOn,
     tasks,
+    startDate,
 
     setTasks: (params: ITask[]) => dispatch(
       setTasks(params),
     ),
-    startTimer: () => dispatch(startTimer()),
+    startTimer: (startDate: string) => dispatch(
+      startTimer(startDate)
+    ),
     stopTimer: () => dispatch(stopTimer()),
   }
 }

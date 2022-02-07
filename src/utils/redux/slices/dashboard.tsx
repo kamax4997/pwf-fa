@@ -5,7 +5,7 @@ import { ITask } from 'utils/types'
 const initialState = {
   isLoading: false,
   isTimerOn: false,
-  isError: false,
+  startDate: '',
   tasks: [],
 }
 
@@ -17,7 +17,7 @@ const slice = createSlice({
     getInitialize(state, action) {
       state.isLoading = false
       state.isTimerOn = false
-      state.isError = false
+      state.startDate = ''
       state.tasks = []
     },
     // START LOADING
@@ -29,8 +29,9 @@ const slice = createSlice({
       state.isLoading = false
     },
     // TIMER ON
-    onTimerOn(state) {
+    onTimerOn(state, action) {
       state.isTimerOn = true
+      state.startDate = action.payload.startDate
     },
     // TIMER OFF
     onTimerOff(state) {
@@ -57,9 +58,9 @@ export function setTasks(tasks: ITask[]) {
   }
 }
 
-export function startTimer() {
+export function startTimer(startDate: string) {
   return async (dispatch: AppDispatch) => {
-    dispatch(slice.actions.onTimerOn())
+    dispatch(slice.actions.onTimerOn(startDate))
 
     return true
   }

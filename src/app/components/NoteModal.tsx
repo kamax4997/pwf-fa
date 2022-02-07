@@ -5,6 +5,7 @@ import Backdrop from '@material-ui/core/Backdrop'
 import Fade from '@material-ui/core/Fade'
 import { Input, Grid, Button, InputLabel } from '@material-ui/core'
 import { ITask } from 'utils/types'
+import useTimer from 'app/hooks/useTimer'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -37,14 +38,22 @@ interface INoteModalProps {
 const NoteModal: React.FC<INoteModalProps> = (props: INoteModalProps) => {
   const classes = useStyles()
   const { isOpen, handleClose, currentTask, onTimerOff } = props
-  const defaultNote = currentTask?.name.concat('-', '') as string
+  const { startDate } = useTimer()
 
-  const [note, setNote] = React.useState<string>(defaultNote)
+  const defaultNote = React.useMemo(() => {
+    return currentTask?.name.concat('-', startDate) as string
+  }, [currentTask, startDate])
+
+  const [note, setNote] = React.useState<string>('')
 
 
   const onSave = () => {
+    if (note.length === 0) {
+      onTimerOff(defaultNote)
+    } else {
+      onTimerOff(note)
+    }
     handleClose()
-    onTimerOff(note)
   }
 
   const onClose = () => {

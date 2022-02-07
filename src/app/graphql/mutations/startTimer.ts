@@ -19,7 +19,7 @@ const mutation = graphql`
   }
 `
 
-const startTimerMutation = (taskId: string, notes: string, callback: () => void) => {
+const startTimerMutation = (taskId: string, notes: string, callback: (startDate: string) => void) => {
   const variables = {
     input: {
       taskid: taskId,
@@ -27,13 +27,16 @@ const startTimerMutation = (taskId: string, notes: string, callback: () => void)
     },
   }
 
+  let startDate = ''
+
   commitMutation(
     environment,
     {
       mutation,
       variables,
-      onCompleted: () => {
-        callback()
+      onCompleted: (response: any) => {
+        startDate = response?.startTimerecord?.startdate
+        callback(startDate)
       },
       onError: err => console.error(err),
     },

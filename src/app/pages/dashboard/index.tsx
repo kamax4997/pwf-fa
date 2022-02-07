@@ -93,6 +93,7 @@ const Dashboard: React.FC<IDashboardProps> = (props: IDashboardProps) => {
   const [currentTask, setCurrentTask] = React.useState<ITask>()
   const [recordedTime, setRecordedTime] = React.useState(0)
   const [isOpen, setIsOpen] = React.useState(false)
+  const [startDate, setStartDate] = React.useState('')
 
   let dashboardData = queryRef && usePreloadedQuery(
     Dashboard_Query, 
@@ -102,7 +103,11 @@ const Dashboard: React.FC<IDashboardProps> = (props: IDashboardProps) => {
   const onTimerOn = React.useCallback(() => {
     if (currentTask) {
       try {
-        startTimerMutation(currentTask.id, '', startTimer)
+        startTimerMutation(
+          currentTask.id, 
+          '', 
+          (startDate: string) => startTimer(startDate)
+        )
         toast.success('Timer On!')
       } catch(error) {
         toast.error('Something went wrong!')
@@ -113,12 +118,13 @@ const Dashboard: React.FC<IDashboardProps> = (props: IDashboardProps) => {
   }, [currentTask])
 
   const onTimerOff = React.useCallback((note: string) => {
+    console.log("===============", note)
     if (currentTask) {
       try {
         stopTimerMutation(currentTask.id, note, stopTimer)
         setRecordedTime(0)
-        toast.success('Timer Off!')
         queryRef && refresh()
+        toast.success('Timer Off!')
       } catch(error) {
         toast.error('Something went wrong!')
       }

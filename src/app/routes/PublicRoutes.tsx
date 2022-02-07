@@ -15,6 +15,7 @@ const PublicRoutes = () => {
   }, [])
 
   const refresh = useCallback(() => {
+    console.log("----------- refresh -------------")
     loadDashboardQuery({fetchPolicy: 'network-only'})
   }, [])
 
