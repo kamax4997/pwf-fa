@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
-import { setTasks, startTimer, stopTimer, onStopRecording } from 'utils/redux/slices/dashboard'
-import { IRootState } from 'utils/redux/store'
+import { setTasks, startTimer, stopTimer, onStopRecording } from 'app/redux/slices/dashboard'
+import { IRootState } from 'app/redux/store'
 import { ITask, ITimeRecord } from 'utils/types'
 
 const useTimer = () => {

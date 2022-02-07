@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { AppDispatch } from 'utils/redux/store'
+import { AppDispatch } from 'app/redux/store'
 import { ITask, ITimeRecord } from 'utils/types'
 
 interface IDashboardStates {

@@ -46,8 +46,7 @@
     "eject": "react-scripts eject",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx ./",
     "fix": "eslint --ext .js,.jsx,.ts,.tsx  --fix ./",
-    "relay": "relay-compiler --schema schema.graphql --src src --language typescript",
-    "cypress:open": "cypress open"
+    "relay": "relay-compiler --schema schema.graphql --src src --language typescript"
   },
   "browserslist": {
     "production": [
@@ -70,7 +69,6 @@
     "@types/react-router-dom": "^5.3.2",
     "@typescript-eslint/eslint-plugin": "^5.2.0",
     "@typescript-eslint/parser": "^5.2.0",
-    "cypress": "^8.7.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",

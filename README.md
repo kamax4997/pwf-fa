@@ -17,7 +17,6 @@ Created by using [Create React App](https://github.com/facebook/create-react-app
   - API client - Relay
   - MUI
   - State management - Redux Thunk & Toolkit
-  - Cypress
   - Format & Lint - ESLint & Prettier
 
 Custom Templates, format, and ESlint configurations.
@@ -47,7 +46,6 @@ Inside the project directory run:
 - `yarn lint` - lints project files according to Airbnb — as part of their style guide 👍 — it provides an ESLint configuration that anyone can use and it is the standard.
 - `yarn fix` - fix lint errors.
 - `yarn relay` - generate graphql queries.
-- `yarn cypress:open test` - run cypress test
 
 CRA template only support `scripts` and `dependencies` inside generated `package.json`. No `devDependencies` is possible on CRA template for now.
 
