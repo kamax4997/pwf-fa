@@ -23,7 +23,7 @@ Created by using [Create React App](https://github.com/facebook/create-react-app
 Custom Templates, format, and ESlint configurations.
 
 ## Setup Environments
-  - Node 16.2.0
+  - Node 16.13.0
   - Yarn 1.22.17
 
   ```
