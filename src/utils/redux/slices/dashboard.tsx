@@ -42,22 +42,28 @@ const slice = createSlice({
     },
     // TIMER OFF
     onTimerOff(state, action) {
-      console.log(action.payload, "-----------------")
       const newTasks = state.tasks.map((task: ITask) => {
         if (task.id === action.payload.taskId) {
+          task.timerecords?.push(
+            action.payload.stopTimerecord as ITimeRecord
+          )
           const newTask: ITask = {
             id: task.id,
             name: task.name,
-            // timerecords: task?.timerecords?.push(
-            //   action.payload.stopTimerecord as ITimeRecord
-            // ),
+            timerecords: task.timerecords,
             taskTotalTimespent: task.taskTotalTimespent
           }
           return newTask
+        } else {
+          return task
         }
       })
       state.isTimerOn = false
-      // state.tasks = newTasks
+      state.tasks = newTasks
+    },
+    // STOP RECORDING
+    onStopRecording(state) {
+      state.isTimerOn = false
     },
     // SET TASKS
     setTasks(state, action) {
@@ -96,5 +102,11 @@ export function stopTimer(stopTimerecord: ITimeRecord, taskId: string) {
       stopTimerecord,
       taskId
     }))
+  }
+}
+
+export function onStopRecording() {
+  return async (dispatch: AppDispatch) => {
+    dispatch(slice.actions.onStopRecording())
   }
 }

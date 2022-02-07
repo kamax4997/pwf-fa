@@ -53,7 +53,7 @@ const useStyles = makeStyles({
 const TimeEntries: React.FC<ITimeEntriesProps> = (props: ITimeEntriesProps) => {
   const classes = useStyles()
   const { task } = props
-
+  
   return (
     <TableContainer component={Paper}>
       <Table className={classes.table} aria-label="customized table">

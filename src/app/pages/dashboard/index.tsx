@@ -136,7 +136,7 @@ const Dashboard: React.FC<IDashboardProps> = (props: IDashboardProps) => {
     } else {
       toast.error('Please select the task!')
     }
-  }, [currentTask, setRecordedTime])
+  }, [currentTask, setRecordedTime, tasks])
 
   const onSelect = React.useCallback((t: ITask | undefined) => {
     setCurrentTask(t)
@@ -149,7 +149,6 @@ const Dashboard: React.FC<IDashboardProps> = (props: IDashboardProps) => {
     const tasksData = dashboardData?.tasks?.map(task => {
       return {...task} as ITask
     })
-    console.log(tasksData, "effect")
 
     if (tasksData) setTasks(tasksData)
   }, [dashboardData])
@@ -165,7 +164,12 @@ const Dashboard: React.FC<IDashboardProps> = (props: IDashboardProps) => {
     }
   }, [isTimerOn, recordedTime, setRecordedTime])
 
-  console.log(dashboardData, tasks)
+  React.useEffect(() => {
+    const newCurrentTask = tasks.filter((task: ITask) => {
+      return task.id === currentTask?.id
+    })
+    setCurrentTask(newCurrentTask[0])
+  }, [tasks])
 
   return (
     <div className={classes.root}>
@@ -185,7 +189,7 @@ const Dashboard: React.FC<IDashboardProps> = (props: IDashboardProps) => {
             <TimerDisplay
               timeSpent={convertRecordedTime(recordedTime.toString())}
               onTimerOn={onTimerOn}
-              setIsOpen={() => setIsOpen(true)} 
+              setIsOpen={() => setIsOpen(true)}
             />
           </Grid>
 

@@ -15,6 +15,7 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow'
 import StopIcon from '@material-ui/icons/Stop'
 import PWFCogsIntegration from 'assets/images/PWF-cogs-integration.png'
 import useTimer from 'app/hooks/useTimer'
+import { ITimeRecord } from 'utils/types'
 
 interface ITimerDisplayProps {
     timeSpent: string
@@ -54,11 +55,11 @@ const useStyles = makeStyles((theme: Theme) =>
 const TimerDisplay: React.FC<ITimerDisplayProps> = (props: ITimerDisplayProps) => {
   const classes = useStyles()
   const { timeSpent, onTimerOn, setIsOpen } = props
-  const { isTimerOn, stopTimer } = useTimer()
+  const { isTimerOn, onStopRecording } = useTimer()
 
   const onStop = () => {
     setIsOpen()
-    stopTimer()
+    onStopRecording()
   }
 
   return (

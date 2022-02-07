@@ -47,7 +47,6 @@ const NoteModal: React.FC<INoteModalProps> = (props: INoteModalProps) => {
 
   const [note, setNote] = React.useState<string>('')
 
-
   const onSave = () => {
     if (note.length === 0) {
       onTimerOff(defaultNote)
@@ -55,11 +54,13 @@ const NoteModal: React.FC<INoteModalProps> = (props: INoteModalProps) => {
       onTimerOff(note)
     }
     handleClose()
+    setNote('')
   }
 
   const onClose = () => {
-    handleClose()
     onTimerOff(defaultNote)
+    handleClose()
+    setNote('')
   }
 
   const onChange = (event: any) => {
