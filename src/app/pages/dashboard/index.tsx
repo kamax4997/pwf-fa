@@ -9,7 +9,7 @@ import {
   createStyles, 
   Theme 
 } from '@material-ui/core/styles'
-import { useLazyLoadQuery } from 'react-relay'
+import { usePreloadedQuery, PreloadedQuery } from 'react-relay'
 import { graphql } from 'babel-plugin-relay/macro'
 import useTimer from 'app/hooks/useTimer'
 import { ITask } from 'utils/types'
@@ -22,6 +22,7 @@ import {
 } from 'app/components'
 import { startTimerMutation, stopTimerMutation } from 'app/graphql/mutations'
 import { convertRecordedTime } from 'utils/helpers'
+import { dashboardQuery } from './__generated__/dashboardQuery.graphql'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -43,8 +44,44 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-const Dashboard: React.FC = () => {
+export const Dashboard_Query = graphql`
+  query dashboardQuery {
+    tasks (
+      input: {
+        limit: 10
+        orderby: { name: asc }
+        where: { 
+          displaytype:{ NEQ: heading }
+        }
+      }
+    ) {
+      id
+      name
+      timerecords {
+        id
+        timespent
+        startdate
+        enddate
+        running
+        notes
+        contact {
+          id
+          fullname
+        }
+      }
+      timespent
+    }
+  }
+`
+
+interface IDashboardProps {
+  queryRef: PreloadedQuery<dashboardQuery> | undefined | null
+  refresh: () => void
+}
+
+const Dashboard: React.FC<IDashboardProps> = (props: IDashboardProps) => {
   const classes = useStyles()
+  const { queryRef, refresh } = props
   const {
     isTimerOn,
     setTasks, 
@@ -56,37 +93,10 @@ const Dashboard: React.FC = () => {
   const [currentTask, setCurrentTask] = React.useState<ITask>()
   const [recordedTime, setRecordedTime] = React.useState(0)
   const [isOpen, setIsOpen] = React.useState(false)
-
-  const dashboardData = useLazyLoadQuery<any>(
-    graphql`
-      query dashboardQuery {
-        tasks (
-          input: {
-            limit: 10
-            orderby: { name: asc }
-            where: { 
-              displaytype:{ NEQ: heading }
-            }
-          }
-        ) {
-          id
-          name
-          timerecords {
-            id
-            timespent
-            startdate
-            enddate
-            running
-            notes
-            contact {
-              id
-              fullname
-            }
-          }
-          timespent
-        }
-      }
-    `, { },
+  console.log("================", queryRef)
+  const dashboardData = usePreloadedQuery(
+    Dashboard_Query, 
+    queryRef as PreloadedQuery<dashboardQuery>
   )
   
   const onTimerOn = React.useCallback(() => {
@@ -103,6 +113,7 @@ const Dashboard: React.FC = () => {
       setRecordedTime(0)
       stopTimerMutation(currentTask.id, note, stopTimer)
       toast.success('Timer Off!')
+      refresh()
     } else {
       toast.error('Please select the task!')
     }
@@ -116,7 +127,7 @@ const Dashboard: React.FC = () => {
   }, [setCurrentTask, isTimerOn])
 
   React.useEffect(() => {
-    setTasks(dashboardData.tasks)
+    // setTasks(dashboardData?.tasks)
   }, [dashboardData, setTasks])
 
   React.useEffect(() => {
@@ -130,7 +141,7 @@ const Dashboard: React.FC = () => {
     }
   }, [isTimerOn, recordedTime, setRecordedTime])
 
-  console.log(tasks)
+  console.log(dashboardData, tasks)
 
   return (
     <div className={classes.root}>

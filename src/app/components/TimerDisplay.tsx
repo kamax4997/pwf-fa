@@ -54,7 +54,12 @@ const useStyles = makeStyles((theme: Theme) =>
 const TimerDisplay: React.FC<ITimerDisplayProps> = (props: ITimerDisplayProps) => {
   const classes = useStyles()
   const { timeSpent, onTimerOn, setIsOpen } = props
-  const { isTimerOn } = useTimer()
+  const { isTimerOn, stopTimer } = useTimer()
+
+  const onStop = () => {
+    setIsOpen()
+    stopTimer()
+  }
 
   return (
     <Card className={classes.root}>
@@ -75,7 +80,7 @@ const TimerDisplay: React.FC<ITimerDisplayProps> = (props: ITimerDisplayProps) =
           <IconButton 
             aria-label="stop" 
             disabled={!isTimerOn} 
-            onClick={setIsOpen}
+            onClick={onStop}
           >
             <StopIcon className={classes.controlButton} />
           </IconButton>
